@@ -1,0 +1,356 @@
+/* ============================
+   COMMENTS CARD WRAPPER
+   ============================ */
+.vr-card--comments {
+  border-radius: 18px;
+  padding: 1.75rem 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(255, 240, 240, 0.96)
+  );
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 107, 107, 0.28);
+
+  .vr-category__title {
+    font-size: 1.2rem;
+    letter-spacing: 0.02em;
+    color: #ff6b6b;
+  }
+}
+
+/* ============================
+   RATING BLOCK INSIDE COMMENTS
+   ============================ */
+.vr-comments__rating {
+  margin-bottom: 1.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 107, 107, 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  &-title {
+    font-size: 0.9rem;
+    margin: 0;
+    color: var(--vr-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .vr-rating {
+    margin-left: auto;
+  }
+}
+
+/* ============================
+   COMMENT INPUT
+   ============================ */
+.vr-comment-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+
+  textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 107, 107, 0.28);
+    padding: 0.85rem 1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.9);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease,
+      background 0.18s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.55);
+      background: #fff;
+    }
+
+    &::placeholder {
+      color: var(--vr-muted);
+    }
+  }
+
+  button {
+    align-self: flex-end;
+    padding: 0.45rem 1.4rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: #ff6b6b;
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(255, 107, 107, 0.35);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(255, 107, 107, 0.45);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.35);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+}
+
+.vr-comment__empty {
+  font-size: 0.9rem;
+  color: var(--vr-muted);
+  padding: 0.4rem 0;
+}
+
+/* ============================
+   COMMENTS LIST + ITEMS
+   ============================ */
+.vr-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vr-comment {
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  backdrop-filter: blur(6px);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.98);
+  }
+}
+
+.vr-comment__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.vr-comment__name {
+  font-weight: 600;
+  color: #ff6b6b;
+  font-size: 0.95rem;
+}
+
+.vr-comment__meta {
+  font-size: 0.8rem;
+  color: var(--vr-muted);
+}
+
+.vr-comment__text {
+  margin: 0.4rem 0 0.65rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* ============================
+   FOOTER / REACTIONS / ACTIONS
+   ============================ */
+.vr-comment__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.vr-comment__reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.vr-reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 107, 107, 0.28);
+  padding: 0.18rem 0.7rem;
+  background: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease,
+    border-color 0.12s ease;
+
+  &__icon {
+    font-size: 0.9rem;
+  }
+
+  &__count {
+    font-size: 0.8rem;
+    color: var(--vr-muted);
+  }
+
+  &:hover {
+    background: rgba(255, 107, 107, 0.12);
+    border-color: rgba(255, 107, 107, 0.55);
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.35);
+    transform: translateY(-0.5px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+.vr-comment__actions {
+  button {
+    background: none;
+    border: none;
+    color: var(--vr-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 999px;
+    transition: background 0.12s ease, color 0.12s ease;
+
+    &:hover {
+      background: rgba(255, 107, 107, 0.08);
+      color: #ff6b6b;
+    }
+  }
+}
+
+/* ============================
+   REPLY INPUT
+   ============================ */
+.vr-reply-input {
+  margin-top: 0.9rem;
+  margin-left: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  textarea {
+    width: 100%;
+    min-height: 60px;
+    resize: vertical;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 107, 107, 0.28);
+    padding: 0.55rem 0.8rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.95);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.55);
+    }
+  }
+
+  button {
+    align-self: flex-end;
+    padding: 0.3rem 1rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+    &:hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 8px 18px rgba(255, 107, 107, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+  }
+}
+
+/* ============================
+   REPLIES
+   ============================ */
+.vr-replies {
+  margin-top: 1.2rem;
+  margin-left: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+
+  .vr-comment__name {
+    color: #ff6b6b;
+  }
+}
+
+.vr-reply {
+  border-left: 2px solid rgba(255, 107, 107, 0.32);
+  padding-left: 0.9rem;
+}
+
+.vr-reply-input__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.vr-reply-cancel {
+  padding: 0.32rem 1rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: var(--vr-muted);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.vr-reply-submit {
+  padding: 0.32rem 1rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #ff6b6b;
+  color: #fff;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 8px 18px rgba(255, 107, 107, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}

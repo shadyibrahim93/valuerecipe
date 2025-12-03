@@ -1,0 +1,91 @@
+.vr-servings {
+  padding: 1.25rem;
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.vr-servings__title {
+  margin: 0 0 0.8rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.vr-servings__options {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+
+  @media screen and (max-width: 1078px) {
+    flex-wrap: nowrap;
+  }
+}
+
+/* Chip Button */
+
+.vr-servings__chip {
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+
+  &:hover {
+    background: #fff;
+    border-color: var(--vr-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+  }
+
+  &.is-active {
+    background: var(--vr-accent);
+    color: white;
+    border-color: var(--vr-accent);
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+    transform: translateY(-2px);
+  }
+}
+
+/* Custom Input */
+.vr-servings__custom {
+  width: 90px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+
+  &:focus {
+    outline: none;
+    border-color: var(--vr-accent);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
+  }
+}
+
+.vr-servings__chip.pulse {
+  animation: softPulse 1.6s infinite;
+}
+
+@keyframes softPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.15);
+  }
+}

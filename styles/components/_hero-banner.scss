@@ -1,0 +1,92 @@
+.vr-hero {
+  margin-bottom: 1rem;
+
+  &__image {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__overlay {
+    position: absolute;
+    left: 1.25rem;
+    bottom: 1.25rem;
+    color: white;
+    text-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 0.25rem 0;
+
+    @media screen and (max-width: 1078px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__desc {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  &__badge {
+    background: rgb(245 93 93);
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: white;
+    font-weight: 700;
+    border: 2px solid rgb(245 93 93);
+
+    &:hover {
+      border: 2px solid white;
+    }
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    position: relative;
+  }
+
+  &__icon-btn {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid #666;
+    backdrop-filter: blur(6px);
+    top: 12px;
+    right: 12px;
+    color: #fff;
+    padding: 0.55rem;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.2s ease-out;
+    font-size: 1.2rem;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: #fff;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

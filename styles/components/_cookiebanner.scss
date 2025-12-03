@@ -1,0 +1,54 @@
+.vr-cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+
+  background: #1c1c1c;
+  color: #fff;
+  padding: 1rem 1.5rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease forwards;
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.9rem;
+
+    a {
+      color: #ffd66b;
+      text-decoration: underline;
+    }
+  }
+
+  &__button {
+    background: #ffb300;
+    border: none;
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #000;
+    font-weight: 600;
+    transition: 0.2s ease;
+
+    &:hover {
+      background: #ffca47;
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

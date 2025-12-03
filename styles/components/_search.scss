@@ -1,0 +1,281 @@
+.vr-search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+
+  &__input {
+    flex: 1;
+    padding: 0.75rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    font-size: 0.95rem;
+    outline: none;
+    box-shadow: none;
+  }
+
+  &__button {
+    background: var(--vr-accent);
+    color: white;
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+}
+
+.vr-section-title,
+.vr-sidebar__title {
+  margin-top: 0px;
+}
+
+/* -------------------- */
+/* SEARCH BAR           */
+/* -------------------- */
+
+/* Mobile search (below header) */
+.vr-header__search-mobile {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+/* Desktop search (inside header between logo + menu) */
+.vr-header__search-desktop {
+  flex: 1;
+  padding: 0 1rem;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.vr-header__search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+
+  &:focus {
+    outline: none;
+    border-color: var(--vr-accent);
+    box-shadow: 0 0 0 3px rgba(255, 93, 55, 0.22);
+  }
+}
+
+/* ================================
+   SEARCH BAR WRAPPER
+================================ */
+
+.vr-search-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ================================
+   SEARCH BAR FORM
+================================ */
+
+.vr-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  padding: 0.4rem 0.6rem;
+  border-radius: 40px;
+  border: 1px solid #ddd;
+  transition: box-shadow 0.2s ease;
+
+  &:focus-within {
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.25);
+    border-color: var(--vr-accent);
+  }
+}
+
+/* ================================
+   INPUT
+================================ */
+
+.vr-search__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 0.6rem 0.8rem;
+  outline: none;
+}
+
+/* ================================
+   SEARCH BUTTON
+================================ */
+
+.vr-search__button {
+  background: var(--vr-accent);
+  color: #fff;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #ff4c4c;
+  }
+}
+
+/* ================================
+   VOICE SEARCH BUTTON
+================================ */
+
+.vr-search__voice {
+  background: #eee;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.is-listening {
+    background: var(--vr-accent);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+  }
+
+  &:hover {
+    background: #ddd;
+  }
+}
+
+/* ================================
+   DROPDOWN PANEL
+================================ */
+
+.vr-search__dropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  max-height: 70vh;
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 0.8rem 0;
+  z-index: 9999;
+  animation: fadeIn 0.15s ease-out;
+}
+
+/* Smooth fade */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================
+   GROUP + TITLE
+================================ */
+
+.vr-search__group {
+  padding: 0.3rem 0.9rem 0.7rem;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f2f2f2;
+    margin-bottom: 0.5rem;
+  }
+
+  ul {
+    padding: 0px;
+  }
+}
+
+.vr-search__group-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--vr-accent);
+  margin-bottom: 0.35rem;
+}
+
+/* ================================
+   SEARCH ITEMS
+================================ */
+
+.vr-search__item {
+  padding: 0.55rem 0.4rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background 0.18s ease;
+
+  &:hover {
+    background: #f9f9f9;
+  }
+}
+
+.vr-search__item-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.vr-search__item-meta {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* ================================
+   SEARCH RESULTS PAGE
+================================ */
+
+.vr-search-results {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.vr-search-results__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.vr-search-results__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 1100px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.vr-search-results__empty {
+  color: #666;
+  margin-top: 1rem;
+  font-size: 1rem;
+}

@@ -1,0 +1,245 @@
+.vr-preparations {
+  padding: 1.25rem;
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+
+  .vr-section-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    @media screen and (max-width: 1078px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.vr-preparations__row {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 2rem;
+
+  div {
+    flex: 1;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.vr-preparations__ingredients {
+  flex: 1.6; // ← bigger
+}
+
+.vr-preparations__servings {
+  flex: 1; // ← smaller
+}
+
+.vr-section-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  color: #334155;
+}
+
+/* Ingredient check bubble */
+.vr-ingredient-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  &.checked {
+    background: var(--vr-accent);
+    border-color: var(--vr-accent);
+    color: white;
+    transform: scale(1.1);
+  }
+}
+
+/* Store icons */
+.vr-preparations__stores {
+  margin-top: 1rem;
+}
+
+.vr-stores__title {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.vr-stores__icons {
+  display: flex;
+  gap: 0.8rem;
+  font-size: 1.9rem;
+
+  a {
+    color: #475569;
+    transition: 0.2s ease;
+
+    &:hover {
+      color: var(--vr-accent);
+      transform: translateY(-2px) scale(1.1);
+    }
+  }
+}
+
+.vr-preparations {
+  &__number {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--vr-accent);
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--vr-shadow);
+  }
+
+  &__paragraph {
+    flex: 1;
+    font-size: 1.05rem;
+    color: #444;
+    line-height: 1.55;
+  }
+}
+
+.vr-preparations__total-time,
+.vr-preparations__tools {
+  margin-bottom: 20px;
+}
+
+.vr-preparations__tools ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.vr-preparations__tools li {
+  margin-bottom: 4px;
+}
+
+/* ===========================
+   TOTAL TIME SECTION
+=========================== */
+
+.vr-total-time {
+  .vr-section-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+}
+
+.vr-total-time__stats {
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex-wrap: wrap;
+
+  .vr-total-time__item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    strong {
+      font-weight: 600;
+      opacity: 0.85;
+    }
+  }
+
+  .vr-total-time__divider {
+    color: #ccc;
+    margin: 0 8px;
+    font-weight: 300;
+    user-select: none;
+  }
+}
+
+/* Mobile improvements */
+@media (max-width: 480px) {
+  .vr-total-time__stats {
+    font-size: 0.9rem;
+    gap: 6px;
+
+    .vr-total-time__divider {
+      margin: 0 4px;
+    }
+  }
+}
+
+/* ------------------------------
+   COOKING MODE TOGGLE
+------------------------------ */
+.vr-cooking {
+  color: var(--vr-accent);
+}
+.vr-cooking-mode {
+  position: relative;
+}
+
+.vr-cooking-mode__header {
+  margin-bottom: 0.75rem;
+}
+
+.vr-cooking-mode__toggle {
+  display: flex;
+  align-items: center;
+  background: #f6f6f6;
+  border-radius: 40px;
+  padding: 0.45rem 0.9rem;
+  width: 230px;
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+}
+
+.vr-cooking-mode__option {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+  z-index: 2;
+  transition: color 0.25s ease;
+  cursor: pointer;
+}
+
+.vr-cooking-mode__option.is-active {
+  color: white !important;
+}
+
+.vr-cooking-mode__switch {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 6px;
+  width: 50%;
+  background: var(--vr-accent, #ff6b6b);
+  border-radius: 30px;
+  transition: transform 0.25s ease, background 0.25s ease;
+  z-index: 1;
+}
+
+.vr-cooking-mode__switch.is-advanced {
+  transform: translateX(100%);
+  left: -6px;
+}

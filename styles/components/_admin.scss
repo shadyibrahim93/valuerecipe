@@ -1,0 +1,238 @@
+.vr-admin {
+  flex-direction: column;
+  padding: 2rem 0;
+  display: flex;
+  overflow-x: scroll;
+  max-width: calc(100vw - 7rem);
+
+  &__header {
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    color: var(--vr-muted);
+    font-size: 0.9rem;
+  }
+
+  &__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 240px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+  }
+
+  /* ------------------------
+     TABLE WRAPPER
+     full screen, scrollable
+  ------------------------ */
+  &__table-wrapper {
+    flex: 1; /* take full remaining height */
+    overflow-x: auto; /* horizontal scroll */
+    overflow-y: auto; /* vertical scroll */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+
+    /* smoother scrolling */
+    scroll-behavior: smooth;
+
+    /* prevents layout from exploding */
+    max-width: 100%;
+  }
+
+  /* ------------------------
+     TABLE + CELLS
+  ------------------------ */
+  &__table {
+    width: max-content; /* table expands horizontally but still scrolls */
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    vertical-align: top;
+    white-space: nowrap; /* prevents gigantic stretched columns */
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    background: #fafafa;
+    font-weight: 600;
+    z-index: 3;
+  }
+
+  /* Highlight row in edit mode */
+  &__row--editing {
+    background: #fffdf2;
+  }
+
+  /* ------------------------
+     INPUT FIELDS
+  ------------------------ */
+  &__input {
+    width: 100%;
+    min-width: 160px; /* ensures width consistency */
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.8rem;
+    background: #f9f9f9;
+    white-space: normal; /* allow multi-line content */
+    word-break: break-word;
+
+    &:not(:disabled) {
+      background: #fff;
+      border-color: #999;
+    }
+  }
+
+  /* JSON cells upgrade */
+  &__input--textarea {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    min-height: 140px;
+    line-height: 1.35;
+    resize: vertical;
+    white-space: pre; /* preserve indentation */
+    overflow-wrap: normal;
+
+    &:not(:disabled) {
+      background: #fffaf1;
+      border-color: #ffcb7d;
+      box-shadow: inset 0 0 4px rgba(255, 200, 100, 0.4);
+    }
+  }
+
+  /* Make cells with large JSON stretch naturally */
+  td textarea.vr-admin__input--textarea {
+    width: 260px;
+
+    &:not(:disabled) {
+      width: 600px;
+      height: 600px;
+      resize: none;
+    }
+  }
+
+  /* ------------------------
+     ACTION BUTTONS
+  ------------------------ */
+  &__actions {
+    white-space: nowrap;
+  }
+
+  &__btn {
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: #f5f5f5;
+
+    &:hover:not(:disabled) {
+      background: #e8e8e8;
+    }
+
+    &--primary {
+      background: var(--vr-primary);
+      border-color: var(--vr-primary);
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background: var(--vr-primary-dark);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  /* ------------------------
+     PAGINATION
+  ------------------------ */
+  /* Pagination styling */
+  .vr-admin__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid #eaeaea;
+    font-size: 0.9rem;
+  }
+
+  .vr-admin__pagination button {
+    background: #f3f3f3;
+    border: 1px solid #ccc;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: #e6e6e6;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  .vr-admin__page-info {
+    color: #555;
+    font-weight: 500;
+  }
+
+  /* Bottom per page selector */
+  .vr-admin__per-page {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    select {
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+  }
+}
+
+/* Sticky actions column (last column on the right) */
+.vr-admin__table th:last-child,
+.vr-admin__table td:last-child {
+  position: sticky;
+  right: 0;
+  background: #fafafa;
+  z-index: 5; /* above content */
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(4px);
+}

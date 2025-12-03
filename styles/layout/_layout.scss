@@ -1,0 +1,37 @@
+.vr-main {
+  width: 100%;
+  padding-top: 1.25rem;
+  padding-bottom: 2rem;
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.vr-content {
+  flex: 1 1 65%;
+}
+
+.vr-sidebar {
+  width: 320px;
+  flex: 0 0 320px;
+
+  @media screen and (max-width: 1078px) {
+    width: 100%;
+  }
+}
+
+.vr-layout {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1rem;
+
+  @media screen and (max-width: 1078px) {
+    flex-direction: column;
+  }
+
+  .vr-layout__main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}

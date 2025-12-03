@@ -1,0 +1,15 @@
+.vr-ad {
+  position: sticky;
+  top: 94px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px dashed rgba(15, 23, 42, 0.06);
+  padding: 0.6rem;
+  text-align: center;
+  background: linear-gradient(180deg, #fff, #fffaf8);
+  font-size: 0.95rem;
+  color: var(--vr-muted);
+}
+
+.vr-card--ads {
+}

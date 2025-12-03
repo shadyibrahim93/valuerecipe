@@ -1,0 +1,367 @@
+.vr-recipe-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &__media {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    border-radius: 10px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  &__meta {
+    color: var(--vr-muted);
+    font-size: 0.875rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  position: relative;
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__difficulty {
+    border-radius: 6px;
+    text-transform: capitalize;
+    padding: 0.125rem 0.4rem;
+
+    &--easy {
+      background-color: #d7f8d7;
+      color: #2d7a2d;
+    }
+
+    &--medium {
+      background-color: #fff0c9;
+      color: #a87900;
+    }
+
+    &--hard {
+      background-color: #ffd6d6;
+      color: #b30000;
+    }
+  }
+
+  &__save-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    color: #0f172a;
+
+    cursor: pointer;
+    transition: background 0.12s ease, transform 0.12s ease,
+      box-shadow 0.12s ease;
+
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+    }
+
+    &--active {
+      background: #b3e2c7;
+      border: 1px solid #448056;
+      color: #3a7d35;
+      font-weight: 700;
+    }
+  }
+}
+
+.vr-recipe-card__add-modern {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  cursor: pointer;
+  color: #fff;
+  transition: 0.25s ease;
+
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+  svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.5;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.07);
+  }
+
+  &.is-active {
+    background: var(--vr-accent); // remove state = red
+    border-color: var(--vr-accent);
+    color: #fff;
+
+    &:hover {
+      background: var(--vr-accent);
+      border-color: #fff;
+    }
+  }
+}
+
+// examples to add into your recipe card SCSS
+.vr-recipe-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 100%;
+  align-items: start;
+}
+
+.vr-recipe-card__menu {
+  position: static;
+}
+
+.vr-recipe-card__menu-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.25rem 0rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vr-recipe-card__menu-panel {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  width: 100%;
+  min-width: 0;
+  padding: 1rem;
+  animation: slideUpFade 0.2s ease-out;
+  background: #fff;
+  border-radius: 12px; /* Matches card style */
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #eee;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vr-recipe-card__menu-close {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  transition: transform 0.18s ease, color 0.18s ease;
+
+  &:hover {
+    transform: scale(1.15);
+    color: #555;
+  }
+}
+
+.vr-recipe-card__menu-header {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.vr-recipe-card__menu-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 0.5rem;
+}
+
+.vr-recipe-card__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  padding: 0.15rem 0;
+}
+
+/* ============================================
+   RECIPE CARD SKELETON
+============================================ */
+
+.vr-recipe-card--skeleton {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f6f6f6;
+  padding: 0;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.vr-recipe-card__media-skeleton {
+  height: 180px;
+  background: #e4e4e4;
+}
+
+.vr-recipe-card__line-skeleton {
+  height: 16px;
+  background: #e4e4e4;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+.vr-recipe-card__line-skeleton.short {
+  width: 60%;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   RECIPE CARD MENU — ADD NEW CATEGORY
+============================================ */
+
+.vr-recipe-card__menu-new {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #eee;
+
+  /* Ensure form stays inside parent */
+  width: 100%;
+  box-sizing: border-box;
+
+  input {
+    /* 1. Allow input to grow */
+    flex: 1;
+
+    /* 2. THE FIX: Allow input to shrink smaller than default browser size */
+    min-width: 0;
+
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    background: #fafafa;
+    font-size: 0.9rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      border-color: var(--vr-primary);
+      box-shadow: 0 0 0 2px rgba(var(--vr-primary-rgb), 0.18);
+      outline: none;
+      background: #fff;
+    }
+  }
+
+  button {
+    /* 3. Prevent button from getting squished */
+    flex-shrink: 0;
+
+    width: 40px;
+    height: 38px; /* Match input height roughly */
+    background: var(--vr-accent);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+  }
+}
+
+.vr-recipe-card__menu-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vr-recipe-card__menu-delete {
+  background: none;
+  border: none;
+  color: var(--vr-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.95rem;
+
+  &:hover {
+    color: var(--vr-accent);
+    transform: scale(1);
+  }
+}
+
+.vr-btn--guest {
+  color: var(--vr-accent);
+}

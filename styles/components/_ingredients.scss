@@ -1,0 +1,196 @@
+/* ============================================================
+   INGREDIENT GRID
+============================================================ */
+.vr-ingredients {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-auto-rows: max-content;
+  align-items: start;
+  gap: 1rem;
+}
+
+/* ============================================================
+   INGREDIENT CARD
+============================================================ */
+.vr-ingredients__item {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 14px;
+  padding: 0.75rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  }
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ============================================================
+   INGREDIENT IMAGE + TEXT ROW
+============================================================ */
+.vr-ingredients__top {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: 100%;
+  gap: 0.75rem;
+}
+
+.vr-ingredients__img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f1f5f9;
+  flex-shrink: 0;
+}
+
+/* TEXT SECTION */
+.vr-ingredients__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.vr-ingredients__quantity {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.vr-ingredients__name {
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* ============================================================
+   CHECK ICON
+============================================================ */
+.vr-ingredient-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  &.checked {
+    background: var(--vr-accent);
+    border-color: var(--vr-accent);
+    color: #fff;
+    transform: scale(1.1);
+  }
+}
+
+/* ============================================================
+   HEADER SECTION
+============================================================ */
+.vr-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+/* ============================================================
+   AFFILIATE SECTION (NEW CARD)
+============================================================ */
+.vr-ingredients__affiliate-block {
+  width: 100%;
+  padding: 1rem 0px;
+}
+
+.vr-affiliate-subtitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.7rem;
+}
+
+/* ============================================================
+   AFFILIATE PILL GRID
+   Responsive grid: 2–4 pills per row
+============================================================ */
+.vr-ingredients__affiliate {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.6rem;
+  width: 100%;
+}
+
+/* ============================================================
+   PILL STYLE
+============================================================ */
+.vr-affiliate-link {
+  padding: 8px 12px;
+  border-radius: 22px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--vr-muted);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  transition: all 0.18s ease-in-out;
+}
+
+.vr-affiliate-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+   BRAND COLORS (TEXT ONLY)
+============================================================ */
+.vr-affiliate--amazon {
+  &:hover {
+    color: #ff9900;
+    border: 1px solid #ff9900;
+  }
+}
+
+.vr-affiliate--walmart {
+  &:hover {
+    color: #0071ce;
+    border: 1px solid #0071ce;
+  }
+}
+
+.vr-affiliate--target {
+  &:hover {
+    color: #cc0000;
+    border: 1px solid #cc0000;
+  }
+}
+
+.vr-affiliate--instacart {
+  &:hover {
+    color: #19a364;
+    border: 1px solid #19a364;
+  }
+}
+
+.vr-affiliate-icon {
+  font-size: 1.2rem;
+  margin-right: 6px;
+  display: inline-block;
+}

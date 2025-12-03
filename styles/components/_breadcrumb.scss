@@ -1,0 +1,28 @@
+/* ------------------------------
+   BREADCRUMB
+------------------------------ */
+
+.vr-breadcrumb {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.vr-breadcrumb ul {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  list-style: none;
+  padding-left: 0;
+}
+
+.vr-breadcrumb a {
+  color: #ff6b6b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.vr-breadcrumb .active {
+  color: #222;
+  font-weight: 700;
+}

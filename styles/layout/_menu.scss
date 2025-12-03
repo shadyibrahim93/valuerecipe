@@ -1,0 +1,127 @@
+/* Define header height variable for consistency */
+/* Adjust '70px' to match your actual header height */
+$header-height: 80px;
+
+.vr-menu__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Ensure nav has bottom padding so last item isn't cut off when scrolling */
+  padding-bottom: 2rem;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.15rem;
+    color: #1f2937;
+    font-weight: 500;
+    transition: 0.2s ease;
+    text-decoration: none; /* Good practice */
+
+    &:hover {
+      color: var(--vr-accent);
+      transform: translateX(4px);
+    }
+  }
+}
+
+.vr-menu__img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* -------------------- */
+/* SLIDE-IN MENU        */
+/* -------------------- */
+
+.vr-menu-overlay {
+  position: fixed;
+
+  /* FIX 1: Start below the header */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: flex-end;
+
+  /* Ensure this is lower than your header's z-index */
+  z-index: 90;
+}
+
+.vr-menu {
+  width: 260px;
+
+  /* Takes up the remaining vertical space */
+  height: 100%;
+
+  background: #fff;
+  padding: 1.5rem;
+  padding-top: $header-height;
+
+  @media screen and (max-width: 1078px) {
+    padding-top: $header-height + 55px;
+  }
+
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.28s ease;
+
+  /* FIX 2: Allow scrolling inside the white menu panel */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+
+  &__close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    margin-left: auto;
+    cursor: pointer;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+
+    a {
+      color: #1f2937;
+
+      &:hover {
+        color: var(--vr-accent);
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+.vr-menu__link-button {
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  padding: 0;
+  cursor: pointer;
+  font-size: inherit;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

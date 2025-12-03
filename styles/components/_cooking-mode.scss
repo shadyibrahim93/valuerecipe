@@ -1,0 +1,41 @@
+.vr-cook {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 8, 15, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 80;
+
+  &__panel {
+    width: min(960px, 96%);
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 20px 50px rgba(2, 6, 23, 0.6);
+
+    .vr-card {
+      margin-bottom: 0px;
+    }
+
+    .vr-timer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-left: auto;
+    }
+  }
+
+  &__step {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  &__controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}
