@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useEffect, useState, useRef } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb';
@@ -10,31 +11,90 @@ const PER_PAGE = 24;
 const SERVING_TIME = 'lunch';
 const PAGE_TITLE = 'Quick & Healthy Lunch Recipes for Home or Work';
 const HERO_IMAGE = '/images/categories/lunch-category.jpg';
-// ------------------------------------------
 
-export default function LunchPage() {
+// ----------------------------------------
+// 1. SERVER SIDE BUILD (ISR)
+// ----------------------------------------
+export async function getStaticProps() {
+  // --- A. Query Logic ---
+  const query = supabase
+    .from('recipes')
+    .select('*', { count: 'exact' })
+    .ilike('serving_time', SERVING_TIME); // Case-insensitive match for 'lunch'
+
+  // --- B. Fetch First Page (Limit 24) ---
+  const {
+    data: initialRecipes,
+    count,
+    error
+  } = await query.range(0, PER_PAGE - 1);
+
+  if (error) {
+    console.error('ISR Error:', error);
+    return { notFound: true };
+  }
+
+  // --- C. Fetch Max Time (for initial filter state) ---
+  // Lightweight query just to get time columns to set the slider range
+  const { data: timeData } = await supabase
+    .from('recipes')
+    .select('total_time, cook_time')
+    .ilike('serving_time', SERVING_TIME)
+    .limit(100);
+
+  const initialMaxTime = timeData
+    ? Math.max(...timeData.map((r) => r.total_time || r.cook_time || 0))
+    : 60;
+
+  return {
+    props: {
+      initialRecipes: initialRecipes || [],
+      initialTotalCount: count || 0,
+      initialMaxTime
+    },
+    // 👇 Update this page in the background at most once every 60 seconds
+    revalidate: 60
+  };
+}
+
+// ----------------------------------------
+// 2. CLIENT SIDE COMPONENT
+// ----------------------------------------
+export default function LunchPage({
+  initialRecipes = [],
+  initialTotalCount = 0,
+  initialMaxTime = 60
+}) {
+  // Initialize state with Server Data (Instant Load!)
+  const [recipes, setRecipes] = useState(initialRecipes);
+  const [totalCount, setTotalCount] = useState(initialTotalCount);
+
+  // "All Recipes" is used by the FilterPanel to calculate counts/stats.
+  // We load this lazily so it doesn't block the initial render.
   const [allRecipes, setAllRecipes] = useState([]);
-  const [recipes, setRecipes] = useState([]);
 
   const [filters, setFilters] = useState({
     ingredients: [],
     difficulty: null,
-    maxTime: null
+    maxTime: initialMaxTime
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(
+    initialRecipes.length < initialTotalCount
+  );
   const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
 
   const listRef = useRef(null);
   const sentinelRef = useRef(null);
 
   // ----------------------------------------
-  // 1. LOAD ALL RECIPES (For Filter Stats)
+  // 3. LAZY LOAD FILTER DATA
   // ----------------------------------------
   useEffect(() => {
-    const loadBaseData = async () => {
+    async function loadFilterData() {
+      if (allRecipes.length > 0) return;
+
       const params = new URLSearchParams();
       params.set('page', 1);
       params.set('per_page', 300);
@@ -44,30 +104,27 @@ export default function LunchPage() {
         const res = await fetch(`/api/recipes?${params.toString()}`);
         const json = await res.json();
         const base = json.data || [];
-
         setAllRecipes(base);
 
-        // Calculate max time for the slider
-        if (base.length > 0) {
-          const maxT = Math.max(
-            ...base.map((r) => r.total_time || r.cook_time || 0)
-          );
-          setFilters((f) => ({ ...f, maxTime: maxT || 60 }));
-        } else {
-          // Default if no recipes found
-          setFilters((f) => ({ ...f, maxTime: 60 }));
+        // If the full dataset has a larger max time, update the slider
+        const maxT = Math.max(
+          ...base.map((r) => r.total_time || r.cook_time || 0)
+        );
+        if (maxT > filters.maxTime) {
+          setFilters((f) => ({ ...f, maxTime: maxT }));
         }
       } catch (err) {
-        console.error('Failed to load base recipes', err);
-        setFilters((f) => ({ ...f, maxTime: 60 }));
+        console.error('Failed to load filter data', err);
       }
-    };
+    }
 
-    loadBaseData();
+    // Small delay to let the UI paint first
+    const timer = setTimeout(loadFilterData, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   // ----------------------------------------
-  // 2. BUILD QUERY STRING
+  // 4. HELPER: BUILD QUERY STRING
   // ----------------------------------------
   const buildQueryString = (pageNumber) => {
     const params = new URLSearchParams();
@@ -86,7 +143,7 @@ export default function LunchPage() {
   };
 
   // ----------------------------------------
-  // 3. FETCH PAGINATED RECIPES
+  // 5. FETCH RECIPES PAGE (Client Logic)
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
     setIsLoading(true);
@@ -103,7 +160,14 @@ export default function LunchPage() {
 
       setRecipes((prev) => (replace ? data : [...prev, ...data]));
 
-      if (!data.length || data.length < PER_PAGE) {
+      // Determine if there are more results
+      const currentCount = replace ? data.length : recipes.length + data.length;
+      const serverTotal = json.total_count || json.count || 0;
+
+      if (
+        data.length < PER_PAGE ||
+        (serverTotal > 0 && currentCount >= serverTotal)
+      ) {
         setHasMore(false);
       } else {
         setHasMore(true);
@@ -118,20 +182,26 @@ export default function LunchPage() {
   };
 
   // ----------------------------------------
-  // 4. RESET + LOAD WHEN FILTERS CHANGE
+  // 6. RESET + LOAD WHEN FILTERS CHANGE
   // ----------------------------------------
+  const isFirstRun = useRef(true);
   useEffect(() => {
-    // Wait until initial load sets the maxTime
-    if (filters.maxTime === null) return;
+    // Skip the very first run because we already have InitialProps
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
 
+    setRecipes([]);
     setPage(1);
     setHasMore(true);
+    // Optional: Scroll to top of list when filtering
+    // listRef.current?.scrollIntoView({ behavior: 'smooth' });
     fetchRecipesPage(1, true); // replace = true
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   // ----------------------------------------
-  // 5. INFINITE SCROLL
+  // 7. INFINITE SCROLL
   // ----------------------------------------
   useEffect(() => {
     if (!hasMore || isLoading) return;
@@ -148,15 +218,17 @@ export default function LunchPage() {
     );
 
     obs.observe(sentinelRef.current);
-
     return () => obs.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, isLoading, page, filters]);
 
   return (
     <>
       <Head>
         <title>{PAGE_TITLE} | ValueRecipe</title>
+        <meta
+          name='description'
+          content='Browse our collection of quick and healthy lunch recipes. Perfect for work or home.'
+        />
       </Head>
 
       <Breadcrumb />
@@ -167,7 +239,8 @@ export default function LunchPage() {
           alt={PAGE_TITLE}
           className='vr-category-hero__image'
           onError={(e) => {
-            e.target.src = '/images/default-category.jpg';
+            e.target.onerror = null;
+            e.target.src = '/images/hero-banner2.jpg';
           }}
         />
         <div className='vr-category-hero__overlay'>
@@ -179,7 +252,7 @@ export default function LunchPage() {
         <aside className='vr-filter-sidebar'>
           <h3 className='vr-filter-sidebar__title'>Filter</h3>
           <FilterPanel
-            allRecipes={allRecipes}
+            allRecipes={allRecipes} // Populates lazily
             difficultyOptions={['easy', 'medium', 'hard']}
             initialTimeRange={{ min: 0, max: 60 }}
             onFilterChange={setFilters}
