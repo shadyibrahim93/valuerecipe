@@ -2,21 +2,38 @@ import Head from 'next/head';
 import { supabase } from '../../lib/supabaseClient';
 import RecipePage from '../../components/RecipePage/RecipePage';
 
-export async function getServerSideProps({ params }) {
+// 1. Tell Next.js how to handle these dynamic paths
+export async function getStaticPaths() {
+  // We return an empty array to keep build times fast.
+  // 'blocking' means the first visitor will wait for the page to generate (SSR-style),
+  // and every subsequent visitor will get the instant cached version.
+  return {
+    paths: [],
+    fallback: 'blocking'
+  };
+}
+
+// 2. Use StaticProps instead of ServerSideProps
+export async function getStaticProps({ params }) {
   const { id } = params;
 
+  // Query logic remains exactly the same
   const { data: recipe, error } = await supabase
     .from('recipes')
     .select('*')
     .eq('slug', id)
     .single();
 
-  if (!recipe) {
+  if (!recipe || error) {
     return { notFound: true };
   }
 
   return {
-    props: { recipe }
+    props: { recipe },
+    // 👇 The Magic Speed Boost: Cache this page!
+    // It will be treated as static, but re-generated in the background
+    // if a new request comes in after 60 seconds.
+    revalidate: 60
   };
 }
 
