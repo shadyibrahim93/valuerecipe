@@ -1,55 +1,121 @@
 import Head from 'next/head';
 import { useEffect, useState, useRef } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
 
-export default function Recipes() {
-  const [recipes, setRecipes] = useState([]);
+const PER_PAGE = 24;
+
+// ----------------------------------------
+// 1. SERVER SIDE BUILD (ISR)
+// ----------------------------------------
+export async function getStaticProps() {
+  // --- A. Query Logic ---
+  // Fetch newest recipes first by default
+  const query = supabase
+    .from('recipes')
+    .select('*', { count: 'exact' })
+    .order('created_at', { ascending: false });
+
+  // --- B. Fetch First Page (Limit 24) ---
+  const {
+    data: initialRecipes,
+    count,
+    error
+  } = await query.range(0, PER_PAGE - 1);
+
+  if (error) {
+    console.error('ISR Error:', error);
+    return { notFound: true };
+  }
+
+  // --- C. Fetch Max Time (for initial filter state) ---
+  const { data: timeData } = await supabase
+    .from('recipes')
+    .select('total_time, cook_time')
+    .limit(100);
+
+  const initialMaxTime = timeData
+    ? Math.max(...timeData.map((r) => r.total_time || r.cook_time || 0))
+    : 60;
+
+  return {
+    props: {
+      initialRecipes: initialRecipes || [],
+      initialTotalCount: count || 0,
+      initialMaxTime
+    },
+    revalidate: 60
+  };
+}
+
+// ----------------------------------------
+// 2. CLIENT SIDE COMPONENT
+// ----------------------------------------
+export default function Recipes({
+  initialRecipes = [],
+  initialTotalCount = 0,
+  initialMaxTime = 60
+}) {
+  // Initialize state with Server Data
+  const [recipes, setRecipes] = useState(initialRecipes);
+  const [totalCount, setTotalCount] = useState(initialTotalCount);
+
+  // Lazy loaded for filters
   const [allRecipes, setAllRecipes] = useState([]);
+
   const [filters, setFilters] = useState({
     ingredients: [],
     difficulty: null,
-    maxTime: null
+    maxTime: initialMaxTime
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(
+    initialRecipes.length < initialTotalCount
+  );
   const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
 
   const listRef = useRef(null);
   const sentinelRef = useRef(null);
 
-  const PER_PAGE = 24;
-
-  // ---------------------------
-  // INITIAL LOAD OF ALLRECIPES
-  // ---------------------------
-  const initializeFilters = async () => {
-    const params = new URLSearchParams();
-    params.set('page', 1);
-    params.set('per_page', 300);
-
-    const res = await fetch(`/api/recipes?${params.toString()}`);
-    const json = await res.json();
-    const base = json.data || [];
-
-    setAllRecipes(base);
-
-    const maxT = Math.max(...base.map((r) => r.total_time || r.cook_time || 0));
-
-    setFilters((f) => ({ ...f, maxTime: maxT }));
-  };
-
+  // ----------------------------------------
+  // 3. LAZY LOAD FILTER DATA
+  // ----------------------------------------
   useEffect(() => {
-    initializeFilters();
+    async function loadFilterData() {
+      if (allRecipes.length > 0) return;
+
+      const params = new URLSearchParams();
+      params.set('page', 1);
+      params.set('per_page', 300);
+
+      try {
+        const res = await fetch(`/api/recipes?${params.toString()}`);
+        const json = await res.json();
+        const base = json.data || [];
+        setAllRecipes(base);
+
+        const maxT = Math.max(
+          ...base.map((r) => r.total_time || r.cook_time || 0)
+        );
+        if (maxT > filters.maxTime) {
+          setFilters((f) => ({ ...f, maxTime: maxT }));
+        }
+      } catch (err) {
+        console.error('Failed to load filter data', err);
+      }
+    }
+
+    const timer = setTimeout(loadFilterData, 500);
+    return () => clearTimeout(timer);
   }, []);
 
-  // ---------------------------
-  // BUILD QUERY STRING
-  // ---------------------------
+  // ----------------------------------------
+  // 4. HELPER: BUILD QUERY STRING
+  // ----------------------------------------
   const buildQueryString = (pageNumber) => {
     const params = new URLSearchParams();
     params.set('page', pageNumber);
@@ -70,38 +136,53 @@ export default function Recipes() {
     return params.toString();
   };
 
-  // ---------------------------
-  // FETCH RECIPES PAGE
-  // ---------------------------
+  // ----------------------------------------
+  // 5. FETCH RECIPES PAGE (Client Logic)
+  // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
     setIsLoading(true);
 
     const qs = buildQueryString(pageNumber);
-    const res = await fetch(`/api/recipes?${qs}`);
-    const json = await res.json();
-    const data = json.data || [];
+    try {
+      const res = await fetch(`/api/recipes?${qs}`);
+      const json = await res.json();
+      const data = json.data || [];
 
-    if (replace || pageNumber === 1) {
-      setTotalCount(json.total_count || json.count || 0);
+      if (replace || pageNumber === 1) {
+        setTotalCount(json.total_count || json.count || 0);
+      }
+
+      setRecipes((prev) => (replace ? data : [...prev, ...data]));
+
+      const currentCount = replace ? data.length : recipes.length + data.length;
+      const serverTotal = json.total_count || json.count || 0;
+
+      if (
+        data.length < PER_PAGE ||
+        (serverTotal > 0 && currentCount >= serverTotal)
+      ) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+
+      setPage(pageNumber);
+    } catch (err) {
+      console.error('Failed to fetch recipes', err);
+    } finally {
+      setIsLoading(false);
     }
-
-    setRecipes((prev) => (replace ? data : [...prev, ...data]));
-
-    if (!data.length || data.length < PER_PAGE) {
-      setHasMore(false);
-    } else {
-      setHasMore(true);
-    }
-
-    setPage(pageNumber);
-    setIsLoading(false);
   };
 
-  // ---------------------------
-  // RESET + LOAD ON FILTER CHANGE
-  // ---------------------------
+  // ----------------------------------------
+  // 6. RESET + LOAD ON FILTER CHANGE
+  // ----------------------------------------
+  const isFirstRun = useRef(true);
   useEffect(() => {
-    if (!filters.maxTime) return;
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
 
     setRecipes([]);
     setPage(1);
@@ -114,9 +195,9 @@ export default function Recipes() {
     fetchRecipesPage(1, true);
   }, [filters]);
 
-  // ---------------------------
-  // INFINITE SCROLL
-  // ---------------------------
+  // ----------------------------------------
+  // 7. INFINITE SCROLL
+  // ----------------------------------------
   useEffect(() => {
     if (!hasMore || isLoading) return;
     if (!sentinelRef.current) return;
@@ -141,6 +222,10 @@ export default function Recipes() {
     <>
       <Head>
         <title>ValueRecipe — Discover delightful recipes</title>
+        <meta
+          name='description'
+          content='Browse our entire collection of delicious recipes. Filter by ingredients, difficulty, and cooking time.'
+        />
       </Head>
 
       {/* MAIN LAYOUT */}
@@ -150,7 +235,7 @@ export default function Recipes() {
           <h3 className='vr-filter-sidebar__title'>Filter</h3>
 
           <FilterPanel
-            allRecipes={allRecipes}
+            allRecipes={allRecipes} // Populates lazily
             difficultyOptions={['easy', 'medium', 'hard']}
             initialTimeRange={{ min: 0, max: 60 }}
             onFilterChange={setFilters}
