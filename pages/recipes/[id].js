@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { supabase } from '../../lib/supabaseClient';
 import RecipePage from '../../components/RecipePage/RecipePage';
+import { REVALIDATE_TIME } from '../../lib/constants';
 
 // 1. Tell Next.js how to handle these dynamic paths
 export async function getStaticPaths() {
@@ -33,7 +34,7 @@ export async function getStaticProps({ params }) {
     // 👇 The Magic Speed Boost: Cache this page!
     // It will be treated as static, but re-generated in the background
     // if a new request comes in after 60 seconds.
-    revalidate: 60
+    revalidate: REVALIDATE_TIME
   };
 }
 

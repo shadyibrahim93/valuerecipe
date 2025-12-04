@@ -7,35 +7,31 @@ import Breadcrumb from '../../components/Breadcrumb';
 import FilterPanel from '../../components/FilterPanel';
 import MealPlanner from '../../components/MealPlanner';
 import AdSlot from '../../components/AdSlot';
+import { REVALIDATE_TIME } from '../../lib/constants';
 
 const PER_PAGE = 24;
 
-// 1. Define Paths (Blocking = Build on demand)
 export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: 'blocking'
-  };
+  return { paths: [], fallback: 'blocking' };
 }
 
-// 2. Fetch Initial Data on Server (ISR)
 export async function getStaticProps({ params }) {
   const { slug } = params;
   const isTrending = slug === 'trending';
+  const decodedSlug = decodeURIComponent(slug); // Handle spaces e.g. "South American"
 
-  // --- A. Query Logic ---
-  let query = supabase.from('recipes').select('*', { count: 'exact' }); // Get data + total count
+  let query = supabase.from('recipes').select('*', { count: 'exact' });
 
   if (isTrending) {
     query = query
       .order('rating_count', { ascending: false })
       .order('rating', { ascending: false });
   } else {
-    // Match cuisine OR category (case insensitive)
-    query = query.or(`cuisine.ilike.${slug},category.ilike.${slug}`);
+    // 👇 FIX: Reverted to matching ONLY 'cuisine' to match your working client-side logic.
+    // The previous .or(..., category...) failed because the 'category' column likely doesn't exist.
+    query = query.ilike('cuisine', decodedSlug);
   }
 
-  // --- B. Fetch First Page (Limit 24) ---
   const {
     data: initialRecipes,
     count,
@@ -43,31 +39,29 @@ export async function getStaticProps({ params }) {
   } = await query.range(0, PER_PAGE - 1);
 
   if (error) {
-    console.error('ISR Error:', error);
+    console.error(`ISR Error for slug "${decodedSlug}":`, error.message);
     return { notFound: true };
   }
 
-  // --- C. Fetch Max Time (Lightweight query for initial filter state) ---
-  // We fetch just the time columns for a batch to guess the max time slider
+  // Fetch Max Time for filters (Consistency Fix)
   let timeQuery = supabase.from('recipes').select('total_time, cook_time');
   if (!isTrending) {
-    timeQuery = timeQuery.or(`cuisine.ilike.${slug},category.ilike.${slug}`);
+    timeQuery = timeQuery.ilike('cuisine', decodedSlug);
   }
   const { data: timeData } = await timeQuery.limit(100);
-
   const initialMaxTime = timeData
     ? Math.max(...timeData.map((r) => r.total_time || r.cook_time || 0))
     : 60;
 
   return {
     props: {
-      slug,
+      slug: decodedSlug,
       isTrending,
       initialRecipes: initialRecipes || [],
       initialTotalCount: count || 0,
       initialMaxTime
     },
-    revalidate: 60 // Update cache every minute
+    revalidate: REVALIDATE_TIME || 3600
   };
 }
 
@@ -80,12 +74,10 @@ export default function CategoryPage({
 }) {
   const router = useRouter();
 
-  // Initialize state with Server Data (Instant Load!)
   const [recipes, setRecipes] = useState(initialRecipes);
   const [totalCount, setTotalCount] = useState(initialTotalCount);
-  const [allRecipes, setAllRecipes] = useState([]); // For client-side filtering logic
+  const [allRecipes, setAllRecipes] = useState([]);
 
-  // Filter State
   const [filters, setFilters] = useState({
     ingredients: [],
     difficulty: null,
@@ -101,15 +93,14 @@ export default function CategoryPage({
   const listRef = useRef(null);
   const sentinelRef = useRef(null);
 
-  const categoryTitle = isTrending
+  const displayTitle = isTrending
     ? 'Trending Recipes'
-    : `${slug?.charAt(0).toUpperCase() + slug?.slice(1)} Recipes`;
+    : (slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : '') + ' Recipes';
 
-  const heroImage = `/images/categories/${slug}-category.jpg`;
+  const heroImage = `/images/categories/${slug?.toLowerCase()}-category.jpg`;
 
   // ----------------------------------------
   // 0. RESET STATE ON NAVIGATION
-  // If user goes from /italian -> /mexican, we need to reset state from new props
   // ----------------------------------------
   useEffect(() => {
     setRecipes(initialRecipes);
@@ -122,21 +113,19 @@ export default function CategoryPage({
     }));
     setPage(1);
     setHasMore(initialRecipes.length < initialTotalCount);
-    // Clear the "All Recipes" cache so we fetch fresh filter data
     setAllRecipes([]);
-  }, [slug, initialRecipes]); // Run when props change
+  }, [slug, initialRecipes]);
 
   // ----------------------------------------
-  // 1. LOAD "ALL" RECIPES FOR FILTERS (Client Side)
-  // We do this lazily so it doesn't block the UI
+  // 1. LOAD "ALL" RECIPES FOR FILTERS
   // ----------------------------------------
   useEffect(() => {
     async function loadFilterData() {
-      if (!slug || allRecipes.length > 0) return; // Don't refetch if we have data
+      if (!slug || allRecipes.length > 0) return;
 
       const params = new URLSearchParams();
       params.set('page', 1);
-      params.set('per_page', 300); // Fetch enough to populate ingredients list
+      params.set('per_page', 300);
       if (!isTrending) params.set('cuisine', slug);
 
       try {
@@ -145,7 +134,6 @@ export default function CategoryPage({
         const base = json.data || [];
         setAllRecipes(base);
 
-        // Update max time if we found a larger one in the full set
         const maxT = Math.max(
           ...base.map((r) => r.total_time || r.cook_time || 0)
         );
@@ -157,7 +145,6 @@ export default function CategoryPage({
       }
     }
 
-    // Slight delay to prioritize main thread rendering
     const timer = setTimeout(loadFilterData, 500);
     return () => clearTimeout(timer);
   }, [slug, isTrending]);
@@ -183,7 +170,7 @@ export default function CategoryPage({
   };
 
   // ----------------------------------------
-  // 3. FETCH RECIPES PAGE (Client Side Pagination/Filtering)
+  // 3. FETCH RECIPES PAGE
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
     setIsLoading(true);
@@ -200,14 +187,13 @@ export default function CategoryPage({
 
       setRecipes((prev) => (replace ? data : [...prev, ...data]));
 
-      // Determine if there are more pages
       const currentCount = replace ? data.length : recipes.length + data.length;
       const serverTotal = json.total_count || json.count || 0;
 
-      // Safety check: if we fetched fewer than requested, we're likely done
-      if (data.length < PER_PAGE) {
-        setHasMore(false);
-      } else if (serverTotal > 0 && currentCount >= serverTotal) {
+      if (
+        data.length < PER_PAGE ||
+        (serverTotal > 0 && currentCount >= serverTotal)
+      ) {
         setHasMore(false);
       } else {
         setHasMore(true);
@@ -231,7 +217,6 @@ export default function CategoryPage({
       return;
     }
 
-    // Reset and fetch when filters change
     setRecipes([]);
     setPage(1);
     setHasMore(true);
@@ -260,7 +245,6 @@ export default function CategoryPage({
     return () => obs.disconnect();
   }, [hasMore, isLoading, page, filters, slug]);
 
-  // Fallback for static generation while loading
   if (router.isFallback) {
     return <div className='vr-container'>Loading...</div>;
   }
@@ -268,10 +252,10 @@ export default function CategoryPage({
   return (
     <>
       <Head>
-        <title>{categoryTitle} | ValueRecipe</title>
+        <title>{displayTitle} | ValueRecipe</title>
         <meta
           name='description'
-          content={`Browse delicious ${categoryTitle} at ValueRecipe. Find easy, top-rated recipes.`}
+          content={`Browse delicious ${displayTitle} at ValueRecipe. Find easy, top-rated recipes.`}
         />
       </Head>
 
@@ -283,35 +267,33 @@ export default function CategoryPage({
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = '/images/hero-banner2.jpg';
-          }} // Fallback image
-          alt={categoryTitle}
+          }}
+          alt={displayTitle}
           className='vr-category-hero__image'
         />
         <div className='vr-category-hero__overlay'>
-          <h1 className='vr-category-hero__title'>{categoryTitle}</h1>
+          <h1 className='vr-category-hero__title'>{displayTitle}</h1>
         </div>
       </div>
 
       <div className='vr-category-layout'>
-        {/* LEFT FILTER SIDEBAR */}
         <aside className='vr-filter-sidebar'>
           <h3 className='vr-filter-sidebar__title'>Filter</h3>
 
           <FilterPanel
-            allRecipes={allRecipes} // This populates lazily
+            allRecipes={allRecipes}
             difficultyOptions={['easy', 'medium', 'hard']}
             initialTimeRange={{ min: 0, max: 60 }}
             onFilterChange={setFilters}
           />
         </aside>
 
-        {/* MAIN CONTENT */}
         <main
           className='vr-category-main'
           ref={listRef}
         >
           <div className='vr-category-main__header'>
-            <h3 className='vr-category__title'>{categoryTitle}</h3>
+            <h3 className='vr-category__title'>{displayTitle}</h3>
             <span className='vr-category-main__meta'>
               {totalCount
                 ? `${recipes.length} out of ${totalCount} recipes loaded`
@@ -344,7 +326,6 @@ export default function CategoryPage({
           )}
         </main>
 
-        {/* RIGHT SIDEBAR */}
         <aside className='vr-sidebar'>
           <MealPlanner />
           <AdSlot position='header' />

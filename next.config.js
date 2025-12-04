@@ -4,13 +4,6 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
 
-  // 🔥 Fix for the "import is reserved" error:
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true
-  },
-
   sassOptions: {
     sourceMap: true,
     includePaths: [path.join(__dirname, 'scss')]
@@ -26,6 +19,7 @@ const nextConfig = {
   },
 
   async rewrites() {
+    // Only enable ads.txt redirect in PRODUCTION
     if (process.env.NODE_ENV === 'production') {
       return [
         {
@@ -35,8 +29,11 @@ const nextConfig = {
         }
       ];
     }
+
+    // No rewrite in dev
     return [];
   }
 };
 
+// 🔥 MUST USE COMMONJS EXPORT FOR FIREBASE SSR
 module.exports = nextConfig;

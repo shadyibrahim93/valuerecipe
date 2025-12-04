@@ -1,14 +1,8 @@
-import { useModal } from './ModalContext';
-
-export default function VRModal({ children }) {
-  const { showIngredientsModal, setShowIngredientsModal } = useModal();
-
-  if (!showIngredientsModal) return null;
-
+export default function VRModal({ children, onClose }) {
   return (
     <div
       className='vr-modal__backdrop'
-      onClick={() => setShowIngredientsModal(false)}
+      onClick={onClose}
     >
       <div
         className='vr-modal__content'
@@ -16,11 +10,13 @@ export default function VRModal({ children }) {
       >
         <button
           className='vr-modal__close'
-          onClick={() => setShowIngredientsModal(false)}
+          onClick={onClose}
+          aria-label='Close modal'
         >
           ×
         </button>
 
+        {/* Render whatever content is passed into the modal */}
         {children}
       </div>
     </div>

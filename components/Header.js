@@ -6,14 +6,12 @@ import { useRouter } from 'next/router'; // 1. Import useRouter
 import { useUser } from './UserContext';
 import { supabase } from '../lib/supabaseClient';
 import CreateFromIngredients from './CreateFromIngredients.js';
-import VRModal from './VRModal';
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, loading } = useUser();
   const router = useRouter();
-  const [plannerOpen, setPlannerOpen] = useState(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -195,13 +193,6 @@ export default function Header() {
           </aside>
         </div>
       )}
-
-      <VRModal
-        open={plannerOpen}
-        onClose={() => setPlannerOpen(false)}
-      >
-        <CreateFromIngredients />
-      </VRModal>
     </>
   );
 }

@@ -6,6 +6,7 @@ import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
+import { REVALIDATE_TIME } from '../lib/constants';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'breakfast';
@@ -53,7 +54,7 @@ export async function getStaticProps() {
       initialMaxTime
     },
     // 👇 Update this page in the background at most once every 60 seconds
-    revalidate: 60
+    revalidate: REVALIDATE_TIME
   };
 }
 

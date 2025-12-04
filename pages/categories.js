@@ -5,11 +5,13 @@ import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb.js';
 import MealPlanner from '../components/MealPlanner.js';
+import { useModal } from '../components/ModalContext';
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
   const [cuisines, setCuisines] = useState([]);
   const [cuisineRecipes, setCuisineRecipes] = useState({});
+  const { setShowIngredientsModal } = useModal();
 
   /* ----------------------------------------
      Load Trending Recipes (First 8)
@@ -224,12 +226,12 @@ export default function Home() {
           </p>
 
           <div className='vr-hero__actions'>
-            <a
+            <button
               className='vr-hero__badge'
-              href='#planner'
+              onClick={() => setShowIngredientsModal(true)}
             >
               What Can I Cook?
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -244,12 +246,19 @@ export default function Home() {
               itemScope
               itemType='https://schema.org/ItemList'
             >
-              <h3 className='vr-category__title'>{cuisineName} Recipes</h3>
-
-              <meta
-                itemProp='name'
-                content={`${cuisineName} Recipes`}
-              />
+              <div className='vr-category__header'>
+                <h3 className='vr-category__title'>{cuisineName} Recipes</h3>
+                <Link
+                  href={`/${cuisineName}.toLowerCase()}`}
+                  className='vr-category__link'
+                >
+                  View all {cuisineName} recipes →
+                </Link>
+                <meta
+                  itemProp='name'
+                  content={`${cuisineName} Recipes`}
+                />
+              </div>
 
               <div className='vr-category__grid'>
                 {(cuisineRecipes[cuisineName] || []).map((r) => (
@@ -259,14 +268,6 @@ export default function Home() {
                   />
                 ))}
               </div>
-
-              {(cuisineRecipes[cuisineName]?.length || 0) >= 8 && (
-                <div className='vr-viewmore'>
-                  <Link href={`/categories/${encodeURIComponent(cuisineName)}`}>
-                    <button className='vr-viewmore__btn'>View More →</button>
-                  </Link>
-                </div>
-              )}
             </section>
           ))}
         </div>

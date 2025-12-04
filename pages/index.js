@@ -34,7 +34,7 @@ export async function getStaticProps() {
     const key = r.serving_time?.trim();
     if (!key) return acc;
     if (!acc[key]) acc[key] = [];
-    if (acc[key].length < 6) acc[key].push(r);
+    if (acc[key].length < 8) acc[key].push(r);
     return acc;
   }, {});
 
@@ -53,7 +53,7 @@ export async function getStaticProps() {
         .from('recipes')
         .select('*')
         .eq('cuisine', cuisine)
-        .limit(6);
+        .limit(8);
 
       cuisineRecipes[cuisine] = data || [];
     })

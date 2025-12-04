@@ -89,16 +89,16 @@ export default function Footer() {
             <h4>Browse By Meal</h4>
             <ul>
               <li>
-                <Link href='/categories/breakfast'>Breakfast</Link>
+                <Link href='/breakfast'>Breakfast</Link>
               </li>
               <li>
-                <Link href='/categories/lunch'>Lunch</Link>
+                <Link href='/lunch'>Lunch</Link>
               </li>
               <li>
-                <Link href='/categories/dinner'>Dinner</Link>
+                <Link href='/dinner'>Dinner</Link>
               </li>
               <li>
-                <Link href='/categories/dessert'>Dessert</Link>
+                <Link href='/dessert'>Dessert</Link>
               </li>
             </ul>
           </div>

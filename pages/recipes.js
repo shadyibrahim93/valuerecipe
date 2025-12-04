@@ -5,6 +5,7 @@ import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
+import { REVALIDATE_TIME } from '../lib/constants';
 
 const PER_PAGE = 24;
 
@@ -47,7 +48,7 @@ export async function getStaticProps() {
       initialTotalCount: count || 0,
       initialMaxTime
     },
-    revalidate: 60
+    revalidate: REVALIDATE_TIME
   };
 }
 
