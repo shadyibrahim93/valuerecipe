@@ -50,7 +50,7 @@
 .vr-category-layout {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr) 320px;
-  gap: 1.5rem;
+  gap: 1rem;
   margin-top: 1rem;
 
   @media (max-width: 1078px) {
@@ -72,8 +72,10 @@
   overflow-y: auto;
   padding-right: 0.5rem; // prevent clipping scrollbar
 
-  @media (max-width: 1078px) {
-    display: none;
+  &--desktop {
+    @media (max-width: 1078px) {
+      display: none;
+    }
   }
 
   &__title {
@@ -86,6 +88,10 @@
 /* -----------------------------------------
    FILTER PANEL
 ------------------------------------------ */
+
+.vr-filter-sidebar__title {
+  margin-bottom: 0px;
+}
 .vr-filter-panel {
   display: flex;
   flex-direction: column;
@@ -287,7 +293,7 @@
    MOBILE FILTER BUTTON
 ------------------------------------------ */
 .vr-category-mobile-filter {
-  margin: 0.75rem 0;
+  margin: 0;
   display: none;
 
   @media (max-width: 1078px) {

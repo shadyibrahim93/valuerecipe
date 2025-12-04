@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function FilterPanel({
   allRecipes = [],
@@ -15,6 +16,12 @@ export default function FilterPanel({
 
   const [timeRange, setTimeRange] = useState(initialTimeRange);
   const [maxTime, setMaxTime] = useState(initialTimeRange.max);
+
+  // State for mobile filter modal visibility
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
+
+  // State to handle SSR (Portals only work on client)
+  const [mounted, setMounted] = useState(false);
 
   const previousIngredients = useRef([]);
 
@@ -40,9 +47,27 @@ export default function FilterPanel({
   };
 
   // ---------------------------
-  // INIT TIME RANGE FROM RECIPES
-  // (runs when allRecipes first loads / changes)
+  // EFFECTS
   // ---------------------------
+
+  // Handle mounting for Portal
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent background scrolling when mobile filter is open
+  useEffect(() => {
+    if (showMobileFilter) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showMobileFilter]);
+
+  // Init Time Range
   useEffect(() => {
     if (!allRecipes.length) return;
 
@@ -65,9 +90,7 @@ export default function FilterPanel({
   }, [allRecipes, initialTimeRange.max]);
 
   // ---------------------------
-  // BASE POOL: recipes that co-exist with filters
-  //   - respect maxTime
-  //   - contain ALL selected ingredient slugs (image)
+  // LOGIC: POOL & OPTIONS
   // ---------------------------
   const pool = useMemo(() => {
     if (!allRecipes.length) return [];
@@ -93,61 +116,40 @@ export default function FilterPanel({
     });
   }, [allRecipes, selectedIngredients, maxTime]);
 
-  // ---------------------------
-  // AVAILABLE DIFFICULTY FROM POOL
-  // (time + selectedIngredients applied; NOT selectedDifficulty)
-  // ---------------------------
   const availableDifficulty = useMemo(() => {
     const diffState = { easy: false, medium: false, hard: false };
-
     pool.forEach((rec) => {
       const d = rec.difficulty?.toLowerCase();
       if (d && diffState[d] !== undefined) {
         diffState[d] = true;
       }
     });
-
     return diffState;
   }, [pool]);
 
-  // ---------------------------
-  // INGREDIENT OPTIONS (CO-EXIST LOGIC)
-  //   - start from pool (time + ingredients)
-  //   - optionally filter by selectedDifficulty
-  //   - dedupe by image slug
-  // ---------------------------
   const ingredientOptions = useMemo(() => {
     const ingMap = new Map();
-
     let source = pool;
     if (selectedDifficulty) {
       source = source.filter(
         (r) => r.difficulty?.toLowerCase() === selectedDifficulty
       );
     }
-
     source.forEach((rec) => {
       const ings = getRecipeIngredients(rec);
       ings.forEach((i) => {
         if (!i?.image) return;
-        const key = i.image; // unique slug
+        const key = i.image;
         if (!ingMap.has(key)) {
-          ingMap.set(key, {
-            key,
-            label: key.replace(/-/g, ' ')
-          });
+          ingMap.set(key, { key, label: key.replace(/-/g, ' ') });
         }
       });
     });
-
     return Array.from(ingMap.values()).sort((a, b) =>
       a.label.localeCompare(b.label)
     );
   }, [pool, selectedDifficulty]);
 
-  // ---------------------------
-  // FILTERED INGREDIENTS (SEARCH)
-  // ---------------------------
   const filteredIngredients = useMemo(
     () =>
       ingredientOptions.filter((i) =>
@@ -156,24 +158,19 @@ export default function FilterPanel({
     [ingredientOptions, ingredientSearch]
   );
 
-  // ---------------------------
-  // SEND FILTER CHANGES UP
-  // ---------------------------
+  // Send filter changes up
   useEffect(() => {
     onFilterChange({
-      ingredients: selectedIngredients, // list of image slugs
+      ingredients: selectedIngredients,
       difficulty: selectedDifficulty,
       maxTime
     });
   }, [selectedIngredients, selectedDifficulty, maxTime, onFilterChange]);
 
-  // ---------------------------
-  // FADE-OUT ANIMATION FOR REMOVED PILLS
-  // ---------------------------
+  // Fade-out animation
   useEffect(() => {
     const prevKeys = previousIngredients.current.map((i) => i.key);
     const currKeys = ingredientOptions.map((i) => i.key);
-
     const removed = prevKeys.filter((key) => !currKeys.includes(key));
 
     removed.forEach((removedKey) => {
@@ -187,22 +184,25 @@ export default function FilterPanel({
         }, 250);
       }
     });
-
     previousIngredients.current = ingredientOptions;
   }, [ingredientOptions]);
 
-  // ---------------------------
-  // CLEAR FILTERS
-  // ---------------------------
+  // Clear filters
   const clearFilters = () => {
     setSelectedIngredients([]);
     setSelectedDifficulty(null);
     setIngredientSearch('');
     setMaxTime(timeRange.max);
+    if (showMobileFilter) setShowMobileFilter(false);
   };
 
-  return (
+  // ---------------------------
+  // UI: REUSABLE FILTER CONTENT
+  // ---------------------------
+  // REMOVED: <aside> wrapper. This now only contains the inner content.
+  const FilterContent = (
     <div className='vr-filter-panel'>
+      <h3 className='vr-filter-sidebar__title'>Filter</h3>
       {/* SEARCH */}
       <div className='vr-filter-group'>
         <label className='vr-filter-label'>Search Ingredients</label>
@@ -275,7 +275,6 @@ export default function FilterPanel({
           Max Cook Time:
           <span className='vr-filter-label__value'> {maxTime} min</span>
         </label>
-
         <input
           type='range'
           className='vr-slider'
@@ -285,7 +284,6 @@ export default function FilterPanel({
           value={maxTime}
           onChange={(e) => setMaxTime(Number(e.target.value))}
         />
-
         <div className='vr-filter-slider__scale'>
           <span>{timeRange.min} min</span>
           <span>{timeRange.max} min</span>
@@ -302,5 +300,55 @@ export default function FilterPanel({
         </button>
       </div>
     </div>
+  );
+
+  // ---------------------------
+  // UI: PORTAL MODAL
+  // ---------------------------
+  // The content renders directly here, NOT wrapped in the hidden desktop sidebar class
+  const MobileDrawerPortal =
+    mounted && showMobileFilter
+      ? createPortal(
+          <div className='vr-filter-drawer-overlay'>
+            <div className='vr-filter-drawer'>
+              <div className='vr-filter-drawer__header'>
+                <h3>Filter Recipes</h3>
+                <button
+                  className='vr-filter-drawer__close'
+                  onClick={() => setShowMobileFilter(false)}
+                >
+                  &times;
+                </button>
+              </div>
+              {FilterContent}
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
+
+  // ---------------------------
+  // RENDER
+  // ---------------------------
+  return (
+    <>
+      {/* 1. Mobile Trigger Button */}
+      <div className='vr-category-mobile-filter'>
+        <button
+          className='vr-category-mobile-filter__btn'
+          onClick={() => setShowMobileFilter(true)}
+        >
+          Filters
+        </button>
+      </div>
+
+      {/* 2. Desktop Content - Wrapped in sidebar ASIDE here */}
+      <aside className='vr-filter-sidebar vr-filter-sidebar--desktop'>
+        {FilterContent}
+      </aside>
+
+      {/* 3. Mobile Modal (Portal) */}
+      {MobileDrawerPortal}
+    </>
   );
 }

@@ -279,16 +279,12 @@ export default function CategoryPage({
       </div>
 
       <div className='vr-category-layout'>
-        <aside className='vr-filter-sidebar'>
-          <h3 className='vr-filter-sidebar__title'>Filter</h3>
-
-          <FilterPanel
-            allRecipes={allRecipes}
-            difficultyOptions={['easy', 'medium', 'hard']}
-            initialTimeRange={{ min: 0, max: 60 }}
-            onFilterChange={setFilters}
-          />
-        </aside>
+        <FilterPanel
+          allRecipes={allRecipes}
+          difficultyOptions={['easy', 'medium', 'hard']}
+          initialTimeRange={{ min: 0, max: 60 }}
+          onFilterChange={setFilters}
+        />
 
         <main
           className='vr-category-main'

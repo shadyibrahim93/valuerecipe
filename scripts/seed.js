@@ -16,8 +16,6 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 async function seed() {
-  console.log('Seeding demo data...');
-
   const recipes = [
     {
       title: 'Sunset Shakshuka',
@@ -104,7 +102,6 @@ async function seed() {
     for (const a of ads) {
       await supabase.from('ad_slots').upsert(a);
     }
-    console.log('Seed complete');
   } catch (err) {
     console.error('Seed failed:', err);
   }

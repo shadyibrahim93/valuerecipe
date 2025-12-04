@@ -28,7 +28,6 @@ try {
   });
 
   zip.writeZip(outputFileName);
-  console.log(`Successfully created ${outputFileName}`);
 } catch (e) {
   console.error('Error creating zip. You likely ran out of memory.', e);
 }

@@ -232,16 +232,12 @@ export default function Recipes({
       {/* MAIN LAYOUT */}
       <div className='vr-category-layout'>
         {/* LEFT FILTER SIDEBAR */}
-        <aside className='vr-filter-sidebar'>
-          <h3 className='vr-filter-sidebar__title'>Filter</h3>
-
-          <FilterPanel
-            allRecipes={allRecipes} // Populates lazily
-            difficultyOptions={['easy', 'medium', 'hard']}
-            initialTimeRange={{ min: 0, max: 60 }}
-            onFilterChange={setFilters}
-          />
-        </aside>
+        <FilterPanel
+          allRecipes={allRecipes} // Populates lazily
+          difficultyOptions={['easy', 'medium', 'hard']}
+          initialTimeRange={{ min: 0, max: 60 }}
+          onFilterChange={setFilters}
+        />
 
         {/* MAIN GRID */}
         <main
