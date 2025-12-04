@@ -3,7 +3,7 @@ User-agent: *
 Disallow: /
 
 # Host
-Host: https://valuerecipekitchen.com
+Host: https://rekadish.com
 
 # Sitemaps
-Sitemap: https://valuerecipekitchen.com/sitemap.xml
+Sitemap: https://rekadish.com/sitemap.xml

@@ -1,6 +1,7 @@
 // pages/404.js
 import Head from 'next/head';
 import Link from 'next/link';
+import { BRAND_NAME, BRAND_URL } from '../lib/constants';
 
 export default function NotFoundPage() {
   const schema = {
@@ -9,13 +10,13 @@ export default function NotFoundPage() {
     name: '404 Not Found',
     description:
       'Oops! The page you’re looking for has vanished like leftovers in the office fridge.',
-    url: 'https://valuerecipekitchen.com/404'
+    url: `${BRAND_URL}/404`
   };
 
   return (
     <>
       <Head>
-        <title>404 — This Recipe Got Burned 😅 | ValueRecipe</title>
+        <title>404 — This Recipe Got Burned 😅 | {BRAND_NAME}</title>
         <meta
           name='description'
           content='Oops! The page you’re looking for has vanished like leftovers in the office fridge.'

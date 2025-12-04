@@ -9,6 +9,7 @@ import AdSlot from '../components/AdSlot';
 import { getFavoriteIds } from '../lib/favorites';
 import FavoriteAddBox from '../components/FavoriteAddBox';
 import CreateFromIngredients from '../components/CreateFromIngredients';
+import { BRAND_NAME } from '../lib/constants';
 
 // System categories always present:
 const SYSTEM_CATEGORIES = [
@@ -341,7 +342,7 @@ export default function ProfilePage() {
         </Head>
 
         <div className='vr-auth'>
-          <h1 className='vr-page__title'>Your ValueRecipe Profile</h1>
+          <h1 className='vr-page__title'>Your {BRAND_NAME} Profile</h1>
           <p className='vr-page__subtitle'>
             Sign in to save recipes, create categories, and more.
           </p>

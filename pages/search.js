@@ -1,4 +1,6 @@
 // pages/search.js
+import { BRAND_NAME, BRAND_URL } from '../lib/constants'; // BRAND_URL ADDED
+
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useMemo } from 'react';
@@ -15,7 +17,7 @@ export default function SearchResultsPage() {
   const [trending, setTrending] = useState([]);
 
   /* ----------------------------------------
-     LOAD SEARCH RESULTS
+      LOAD SEARCH RESULTS
   ---------------------------------------- */
   useEffect(() => {
     if (!q) return;
@@ -31,7 +33,7 @@ export default function SearchResultsPage() {
   }, [q]);
 
   /* ----------------------------------------
-     LOAD TOP-RATED TRENDING RECIPES
+      LOAD TOP-RATED TRENDING RECIPES
   ---------------------------------------- */
   const loadTrending = async () => {
     const res = await fetch(`/api/recipes?page=1&per_page=50`);
@@ -52,27 +54,27 @@ export default function SearchResultsPage() {
   }, [results]);
 
   /* ----------------------------------------
-     SEO TITLE / DESCRIPTION / KEYWORDS
+      SEO TITLE / DESCRIPTION / KEYWORDS
   ---------------------------------------- */
   const pageTitle = q
-    ? `Search results for "${q}" — ValueRecipe`
-    : 'Search recipes — ValueRecipe';
+    ? `Search results for "${q}" — ${BRAND_NAME}`
+    : `Search recipes — ${BRAND_NAME}`;
 
   const pageDescription = q
-    ? `Browse recipe results for "${q}" on ValueRecipe. Discover curated recipes by ingredients, cuisine, and more.`
-    : 'Search thousands of recipes on ValueRecipe by keyword, ingredients, cuisine, and more.';
+    ? `Browse recipe results for "${q}" on ${BRAND_NAME}. Discover curated recipes by ingredients, cuisine, and more.`
+    : `Search thousands of recipes on ${BRAND_NAME} by keyword, ingredients, cuisine, and more.`; // Cleaned template string
 
   const metaKeywords = useMemo(() => {
-    if (!q) return 'recipe search, search recipes, ValueRecipe';
-    return `recipe search, search recipes, ${q}, ValueRecipe`;
+    if (!q) return `recipe search, search recipes, ${BRAND_NAME}`;
+    return `recipe search, search recipes, ${q}, ${BRAND_NAME}`;
   }, [q]);
 
   const canonicalUrl = q
-    ? `https://valuerecipekitchen.com/search?q=${encodeURIComponent(q)}`
-    : 'https://valuerecipekitchen.com/search';
+    ? `${BRAND_URL}/search?q=${encodeURIComponent(q)}` // Updated
+    : `${BRAND_URL}/search`; // Updated
 
   /* ----------------------------------------
-     JSON-LD: SearchResultsPage schema
+      JSON-LD: SearchResultsPage schema
   ---------------------------------------- */
   const searchSchema = {
     '@context': 'https://schema.org',
@@ -82,7 +84,7 @@ export default function SearchResultsPage() {
     url: canonicalUrl,
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://valuerecipekitchen.com/search?q={search_term_string}',
+      target: `${BRAND_URL}/search?q={search_term_string}`, // Updated
       'query-input': 'required name=search_term_string'
     }
   };
@@ -140,7 +142,7 @@ export default function SearchResultsPage() {
         />
         <meta
           property='og:image'
-          content='https://valuerecipekitchen.com/images/og-search.jpg'
+          content={`${BRAND_URL}/images/og-search.jpg`} // Updated
         />
         <meta
           property='og:site_name'
@@ -162,7 +164,7 @@ export default function SearchResultsPage() {
         />
         <meta
           name='twitter:image'
-          content='https://valuerecipekitchen.com/images/og-search.jpg'
+          content={`${BRAND_URL}/images/og-search.jpg`} // Updated
         />
 
         {/* STRUCTURED DATA: SearchResultsPage */}

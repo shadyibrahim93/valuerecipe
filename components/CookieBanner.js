@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { BRAND_NAME } from '../lib/constants';
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -29,7 +30,7 @@ export default function CookieBanner() {
       <div className='vr-cookie-banner__content'>
         <p>
           We use cookies for website functionality, analytics, and personalized
-          ads. By using ValueRecipe, you agree to our{' '}
+          ads. By using {BRAND_NAME}, you agree to our{' '}
           <Link href='/privacy'>Privacy Policy</Link> and{' '}
           <Link href='/terms'>Terms of Service</Link>.
         </p>

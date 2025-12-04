@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useModal } from '../components/ModalContext';
+import { BRAND_NAME } from '../lib/constants';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -140,7 +141,7 @@ export default function Footer() {
         </div>
 
         <div className='vr-footer__bottom'>
-          © {new Date().getFullYear()} ValueRecipe — Made with ❤️ for home
+          © {new Date().getFullYear()} {BRAND_NAME} — Made with ❤️ for home
           cooks.
         </div>
       </div>

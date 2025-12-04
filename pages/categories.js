@@ -6,6 +6,7 @@ import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb.js';
 import MealPlanner from '../components/MealPlanner.js';
 import { useModal } from '../components/ModalContext';
+import { BRAND_NAME, BRAND_URL } from '../lib/constants'; // BRAND_URL ADDED
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
@@ -14,7 +15,7 @@ export default function Home() {
   const { setShowIngredientsModal } = useModal();
 
   /* ----------------------------------------
-     Load Trending Recipes (First 8)
+      Load Trending Recipes (First 8)
   ---------------------------------------- */
   const loadTrending = async () => {
     const res = await fetch(`/api/recipes?page=1&per_page=8`);
@@ -23,7 +24,7 @@ export default function Home() {
   };
 
   /* ----------------------------------------
-     Load ALL cuisines
+      Load ALL cuisines
   ---------------------------------------- */
   const loadCuisines = async () => {
     const res = await fetch(`/api/recipes?page=1&per_page=500`);
@@ -44,7 +45,7 @@ export default function Home() {
   }, []);
 
   /* ----------------------------------------
-     Load Cuisine Recipes
+      Load Cuisine Recipes
   ---------------------------------------- */
   const loadCuisineRecipes = async (cuisineName) => {
     const res = await fetch(
@@ -65,34 +66,34 @@ export default function Home() {
   }, [cuisines]);
 
   /* ----------------------------------------
-     SEO: keywords
+      SEO: keywords
   ---------------------------------------- */
   const metaKeywords = useMemo(() => {
     const cuisineKeywords = cuisines.join(', ');
-    return `recipes, easy recipes, quick meals, ${cuisineKeywords}, ValueRecipe`;
+    return `recipes, easy recipes, quick meals, ${cuisineKeywords}, ${BRAND_NAME}`;
   }, [cuisines]);
 
   /* ----------------------------------------
-     JSON-LD SCHEMA
+      JSON-LD SCHEMA
   ---------------------------------------- */
 
   // ⭐ Site Schema (Organization + Website)
   const siteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'ValueRecipe',
-    url: 'https://valuerecipekitchen.com',
+    name: BRAND_NAME, // Updated
+    url: BRAND_URL, // Updated
     sameAs: [
-      'https://facebook.com/ValueRecipe',
-      'https://www.pinterest.com/ValueRecipe',
-      'https://www.instagram.com/ValueRecipe'
+      `https://facebook.com/${BRAND_NAME}`, // Updated
+      `https://www.pinterest.com/${BRAND_NAME}`, // Updated
+      `https://www.instagram.com/${BRAND_NAME}` // Updated
     ],
     publisher: {
       '@type': 'Organization',
-      name: 'ValueRecipe',
+      name: BRAND_NAME, // Updated
       logo: {
         '@type': 'ImageObject',
-        url: 'https://valuerecipekitchen.com/logo.png'
+        url: `${BRAND_URL}/logo.png` // Updated
       }
     }
   };
@@ -101,60 +102,57 @@ export default function Home() {
   const homeSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'ValueRecipe — Discover delightful recipes',
+    name: `${BRAND_NAME} — Discover delightful recipes`, // Updated
     description:
       'Explore curated, fast, and fun recipes from all cuisines. Meal ideas for breakfast, lunch, dinner, and more.',
-    url: 'https://valuerecipekitchen.com',
+    url: BRAND_URL, // Updated
     hasPart: cuisines.map((cuisineName) => ({
       '@type': 'Collection',
       name: `${cuisineName} Recipes`,
-      url: `https://valuerecipekitchen.com/categories/${encodeURIComponent(
+      url: `${BRAND_URL}/categories/${encodeURIComponent(
+        // Updated URL structure
         cuisineName
       )}`
     }))
   };
 
   /* ----------------------------------------
-     RENDER
+      RENDER
   ---------------------------------------- */
   return (
     <>
       <Head>
         {/* TITLE */}
-        <title>ValueRecipe — Discover delightful recipes</title>
-
+        <title>{BRAND_NAME} — Discover delightful recipes</title>{' '}
+        {/* Updated */}
         {/* DESCRIPTION */}
         <meta
           name='description'
           content='Discover premium-quality recipes, curated by cuisine and category. Fast, easy, and delicious recipes for everyday cooking.'
         />
-
         {/* KEYWORDS */}
         <meta
           name='keywords'
           content={metaKeywords}
         />
-
         {/* AUTHOR + PUBLISHER META */}
         <meta
           name='author'
-          content='ValueRecipe Editorial Team'
+          content={`${BRAND_NAME} Editorial Team`} // Updated
         />
         <meta
           name='publisher'
-          content='ValueRecipe'
+          content={BRAND_NAME} // Updated
         />
-
         {/* CANONICAL */}
         <link
           rel='canonical'
-          href='https://valuerecipekitchen.com/'
+          href={BRAND_URL} // Updated
         />
-
         {/* OPEN GRAPH */}
         <meta
           property='og:title'
-          content='ValueRecipe — Discover delightful recipes'
+          content={`${BRAND_NAME} — Discover delightful recipes`} // Updated
         />
         <meta
           property='og:description'
@@ -162,11 +160,11 @@ export default function Home() {
         />
         <meta
           property='og:image'
-          content='https://valuerecipekitchen.com/images/cuisine.jpg'
+          content={`${BRAND_URL}/images/cuisine.jpg`} // Updated
         />
         <meta
           property='og:url'
-          content='https://valuerecipekitchen.com/'
+          content={BRAND_URL} // Updated
         />
         <meta
           property='og:type'
@@ -174,9 +172,8 @@ export default function Home() {
         />
         <meta
           property='og:site_name'
-          content='ValueRecipe'
+          content={BRAND_NAME} // Updated
         />
-
         {/* TWITTER */}
         <meta
           name='twitter:card'
@@ -184,7 +181,7 @@ export default function Home() {
         />
         <meta
           name='twitter:title'
-          content='ValueRecipe — Discover delightful recipes'
+          content={`${BRAND_NAME} — Discover delightful recipes`} // Updated
         />
         <meta
           name='twitter:description'
@@ -192,15 +189,13 @@ export default function Home() {
         />
         <meta
           name='twitter:image'
-          content='https://valuerecipekitchen.com/images/cuisine.jpg'
+          content={`${BRAND_URL}/images/cuisine.jpg`} // Updated
         />
-
         {/* STRUCTURED DATA */}
         <script
           type='application/ld+json'
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
         />
-
         <script
           type='application/ld+json'
           dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
@@ -249,7 +244,7 @@ export default function Home() {
               <div className='vr-category__header'>
                 <h3 className='vr-category__title'>{cuisineName} Recipes</h3>
                 <Link
-                  href={`/${cuisineName}.toLowerCase()}`}
+                  href={`/categories/${encodeURIComponent(cuisineName)}`} // Corrected URL structure
                   className='vr-category__link'
                 >
                   View all {cuisineName} recipes →

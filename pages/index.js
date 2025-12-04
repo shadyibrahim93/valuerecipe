@@ -7,6 +7,7 @@ import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import MealPlanner from '../components/MealPlanner';
 import { useModal } from '../components/ModalContext';
+import { BRAND_NAME, BRAND_URL } from '../lib/constants'; // BRAND_URL ADDED
 
 // 👇 1. THIS RUNS ON THE SERVER (ISR)
 export async function getStaticProps() {
@@ -84,7 +85,7 @@ export default function Home({
   ---------------------------------------- */
   const metaKeywords = useMemo(() => {
     const cuisineKeywords = cuisines.join(', ');
-    return `recipes, easy recipes, quick meals, dinner ideas, ${cuisineKeywords}, ValueRecipe`;
+    return `recipes, easy recipes, quick meals, dinner ideas, ${cuisineKeywords}, ${BRAND_NAME}`;
   }, [cuisines]);
 
   /* ----------------------------------------
@@ -94,10 +95,10 @@ export default function Home({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'ValueRecipe',
-    url: 'https://valuerecipekitchen.com',
+    url: BRAND_URL, // Updated
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://valuerecipekitchen.com/search?q={search_term_string}',
+      target: `${BRAND_URL}/search?q={search_term_string}`, // Updated
       'query-input': 'required name=search_term_string'
     }
   };
@@ -106,10 +107,10 @@ export default function Home({
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'ValueRecipe',
-    url: 'https://valuerecipekitchen.com',
+    url: BRAND_URL, // Updated
     logo: {
       '@type': 'ImageObject',
-      url: 'https://valuerecipekitchen.com/logo.png'
+      url: `${BRAND_URL}/logo.png` // Updated
     },
     sameAs: [
       'https://www.facebook.com/ValueRecipe',
@@ -124,17 +125,18 @@ export default function Home({
     name: 'ValueRecipe — Discover delightful recipes',
     description:
       'Discover curated, fast, and fun recipes by cuisine, category, and difficulty.',
-    url: 'https://valuerecipekitchen.com',
+    url: BRAND_URL, // Updated
     hasPart: [
       {
         '@type': 'Collection',
         name: 'Top Rated Recipes',
-        url: 'https://valuerecipekitchen.com/recipes?sort=top-rated'
+        url: `${BRAND_URL}/recipes?sort=top-rated` // Updated
       },
       ...cuisines.map((cuisineName) => ({
         '@type': 'Collection',
         name: `${cuisineName} Recipes`,
-        url: `https://valuerecipekitchen.com/categories/${encodeURIComponent(
+        url: `${BRAND_URL}/categories/${encodeURIComponent(
+          // Updated
           cuisineName
         )}`
       }))
@@ -148,7 +150,7 @@ export default function Home({
         <title>ValueRecipe — Discover delightful recipes</title>
         <meta
           name='description'
-          content='Discover curated, fast, and fun recipes by cuisine and category. Plan meals, cook from your pantry, and explore top-rated dishes on ValueRecipe.'
+          content={`Discover curated, fast, and fun recipes by cuisine and category. Plan meals, cook from your pantry, and explore top-rated dishes on ${BRAND_NAME}.`}
         />
         <meta
           name='keywords'
@@ -166,7 +168,7 @@ export default function Home({
         {/* CANONICAL */}
         <link
           rel='canonical'
-          href='https://valuerecipekitchen.com/'
+          href={BRAND_URL} // Updated
         />
 
         {/* OPEN GRAPH */}
@@ -180,11 +182,11 @@ export default function Home({
         />
         <meta
           property='og:image'
-          content='https://valuerecipekitchen.com/images/og-home.jpg'
+          content={`${BRAND_URL}/images/og-home.jpg`} // Updated
         />
         <meta
           property='og:url'
-          content='https://valuerecipekitchen.com/'
+          content={BRAND_URL} // Updated
         />
         <meta
           property='og:type'
@@ -210,7 +212,7 @@ export default function Home({
         />
         <meta
           name='twitter:image'
-          content='https://valuerecipekitchen.com/images/og-home.jpg'
+          content={`${BRAND_URL}/images/og-home.jpg`} // Updated
         />
 
         {/* STRUCTURED DATA */}

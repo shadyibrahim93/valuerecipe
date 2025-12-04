@@ -6,7 +6,7 @@ import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
-import { REVALIDATE_TIME } from '../lib/constants';
+import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'dessert';
@@ -223,7 +223,9 @@ export default function DessertPage({
   return (
     <>
       <Head>
-        <title>{PAGE_TITLE} | ValueRecipe</title>
+        <title>
+          {PAGE_TITLE} | {BRAND_NAME}
+        </title>
         <meta
           name='description'
           content='Satisfy your sweet tooth with our best dessert recipes. Cakes, cookies, pies, and more.'

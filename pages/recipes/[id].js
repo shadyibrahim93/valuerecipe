@@ -1,7 +1,8 @@
+// pages/recipes/[id].js
 import Head from 'next/head';
 import { supabase } from '../../lib/supabaseClient';
 import RecipePage from '../../components/RecipePage/RecipePage';
-import { REVALIDATE_TIME } from '../../lib/constants';
+import { REVALIDATE_TIME, BRAND_NAME, BRAND_URL } from '../../lib/constants';
 
 // 1. Tell Next.js how to handle these dynamic paths
 export async function getStaticPaths() {
@@ -49,7 +50,7 @@ export default function RecipePageContainer({ recipe }) {
     '@context': 'https://schema.org/',
     '@type': 'Recipe',
     name: recipe.title,
-    image: `https://yourdomain.com/images/recipes/${recipe.image_url}.jpg`,
+    image: `${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`,
     author: {
       '@type': 'Organization',
       name: 'ValueRecipe Editorial Team'
@@ -59,7 +60,7 @@ export default function RecipePageContainer({ recipe }) {
       name: 'ValueRecipe',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://valuerecipekitchen.com/logo.png'
+        url: `${BRAND_URL}/logo.png`
       }
     },
     datePublished: recipe.created_at,
@@ -90,7 +91,9 @@ export default function RecipePageContainer({ recipe }) {
   return (
     <>
       <Head>
-        <title>{recipe.title} — ValueRecipe</title>
+        <title>
+          {recipe.title} — {BRAND_NAME}
+        </title>
 
         {/* DESCRIPTION */}
         <meta
@@ -118,13 +121,13 @@ export default function RecipePageContainer({ recipe }) {
         {/* CANONICAL */}
         <link
           rel='canonical'
-          href={`https://valuerecipekitchen.com/recipes/${recipe.slug}`}
+          href={`${BRAND_URL}/recipes/${recipe.slug}`}
         />
 
         {/* OPEN GRAPH */}
         <meta
           property='og:title'
-          content={`${recipe.title} — ValueRecipe`}
+          content={`${recipe.title} — ${BRAND_NAME}`}
         />
         <meta
           property='og:description'
@@ -132,11 +135,11 @@ export default function RecipePageContainer({ recipe }) {
         />
         <meta
           property='og:image'
-          content={`https://valuerecipekitchen.com/images/recipes/${recipe.image_url}.jpg`}
+          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`}
         />
         <meta
           property='og:url'
-          content={`https://valuerecipekitchen.com/recipes/${recipe.slug}`}
+          content={`${BRAND_URL}/recipes/${recipe.slug}`}
         />
         <meta
           property='og:type'
@@ -154,7 +157,7 @@ export default function RecipePageContainer({ recipe }) {
         />
         <meta
           name='twitter:title'
-          content={`${recipe.title} — ValueRecipe`}
+          content={`${recipe.title} — ${BRAND_NAME}`}
         />
         <meta
           name='twitter:description'
@@ -162,7 +165,7 @@ export default function RecipePageContainer({ recipe }) {
         />
         <meta
           name='twitter:image'
-          content={`https://valuerecipekitchen.com/images/recipes/${recipe.image_url}.jpg`}
+          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`}
         />
         <meta
           name='twitter:site'
@@ -172,7 +175,7 @@ export default function RecipePageContainer({ recipe }) {
         {/* PINTEREST */}
         <meta
           name='pin:media'
-          content={`https://valuerecipekitchen.com/images/recipes/${recipe.image_url}.jpg`}
+          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`}
         />
         <meta
           name='pin:description'

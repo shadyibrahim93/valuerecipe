@@ -4,8 +4,7 @@
 const env = require('dotenv').config({ path: '.env.local' });
 
 module.exports = {
-  siteUrl:
-    process.env.SITE_URL || process.env.URL || 'https://valuerecipekitchen.com',
+  siteUrl: process.env.SITE_URL || process.env.URL || 'https://rekadish.com',
   generateRobotsTxt: true,
 
   robotsTxtOptions: {

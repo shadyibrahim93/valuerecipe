@@ -84,12 +84,12 @@ export default function CommentItem({
         <div className='vr-comment__header'>
           <div>
             <div className='vr-comment__name'>
-              {comment.profiles?.first_name || 'ValueRecipe User'}
+              {comment.profiles?.first_name || `${BRAND_NAME} User`}
             </div>
             <div className='vr-comment__meta'>
               {memberSinceYear && (
                 <span>
-                  ValueRecipe member since {memberSinceYear}
+                  {BRAND_NAME} member since {memberSinceYear}
                   {' • '}
                 </span>
               )}
@@ -184,7 +184,7 @@ export default function CommentItem({
                       <div className='vr-comment__meta'>
                         {replyMemberYear && (
                           <span>
-                            ValueRecipe member since {replyMemberYear}
+                            {BRAND_NAME} member since {replyMemberYear}
                             {' • '}
                           </span>
                         )}

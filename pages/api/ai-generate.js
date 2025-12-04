@@ -1,5 +1,6 @@
 // pages/api/ai-generate.js
 import OpenAI from 'openai';
+import { BRAND_NAME } from '../../lib/constants';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -114,8 +115,7 @@ export default async function handler(req, res) {
       messages: [
         {
           role: 'system',
-          content:
-            'You are a cooking assistant that generates content for ValueRecipe.'
+          content: 'Your cooking assistant that generates content for RekaDish.'
         },
         {
           role: 'user',

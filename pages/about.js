@@ -1,17 +1,18 @@
 // pages/about.js
 import Head from 'next/head';
 import Link from 'next/link';
-import { useModal } from '../components/ModalContext'; // ⭐ ADD THIS
+import { useModal } from '../components/ModalContext';
+import { BRAND_NAME, BRAND_URL } from '../lib/constants';
 
 export default function AboutPage() {
-  const { setShowIngredientsModal } = useModal(); // ⭐ ADD THIS
+  const { setShowIngredientsModal } = useModal();
 
   const orgSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'ValueRecipe',
-    url: 'https://valuerecipekitchen.com',
-    logo: 'https://valuerecipekitchen.com/logo.png',
+    url: BRAND_URL,
+    logo: `${BRAND_URL}/logo.png`,
     sameAs: [
       'https://www.facebook.com/ValueRecipe',
       'https://www.instagram.com/ValueRecipe',
@@ -22,46 +23,45 @@ export default function AboutPage() {
   const aboutSchema = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
-    name: 'About ValueRecipe',
-    url: 'https://valuerecipekitchen.com/about',
-    description:
-      'Learn about ValueRecipe, our mission, our vision, and why we believe cooking should be simple, affordable, and fun for everyone.'
+    name: `About ${BRAND_NAME}`,
+    url: `${BRAND_URL}/about`,
+    description: `Learn about ${BRAND_NAME}, our mission, our vision, and why we believe cooking should be simple, affordable, and fun for everyone.`
   };
 
   return (
     <>
       <Head>
-        <title>About Us — ValueRecipe</title>
+        <title>About Us — {BRAND_NAME}</title>
         <meta
           name='description'
-          content='Learn about ValueRecipe, our mission, story, and why we believe cooking should be simple, affordable, and fun for everyone.'
+          content={`Learn about ${BRAND_NAME}, our mission, story, and why we believe cooking should be simple, affordable, and fun for everyone.`}
         />
         <meta
           name='keywords'
-          content='about ValueRecipe, cooking website story, recipe platform, food mission, home cooking help'
+          content={`about ${BRAND_NAME}, cooking website story, recipe platform, food mission, home cooking help`}
         />
 
         <link
           rel='canonical'
-          href='https://valuerecipekitchen.com/about'
+          href={`${BRAND_URL}/about`}
         />
 
         {/* OG */}
         <meta
           property='og:title'
-          content='About Us — ValueRecipe'
+          content={`About Us — ${BRAND_NAME}`}
         />
         <meta
           property='og:description'
-          content='Discover the story and mission behind ValueRecipe — a platform built to make cooking simple, affordable, and inspiring.'
+          content={`Discover the story and mission behind ${BRAND_NAME} — a platform built to make cooking simple, affordable, and inspiring.`}
         />
         <meta
           property='og:image'
-          content='https://valuerecipekitchen.com/images/og-about.jpg'
+          content={`${BRAND_URL}/images/og-about.jpg`}
         />
         <meta
           property='og:url'
-          content='https://valuerecipekitchen.com/about'
+          content={`${BRAND_URL}/about`}
         />
 
         {/* Twitter */}
@@ -71,15 +71,15 @@ export default function AboutPage() {
         />
         <meta
           name='twitter:title'
-          content='About Us — ValueRecipe'
+          content={`About Us — ${BRAND_NAME}`}
         />
         <meta
           name='twitter:description'
-          content='Discover the story and mission behind ValueRecipe — a platform built to make cooking simple, affordable, and inspiring.'
+          content={`Discover the story and mission behind ${BRAND_NAME} — a platform built to make cooking simple, affordable, and inspiring.`}
         />
         <meta
           name='twitter:image'
-          content='https://valuerecipekitchen.com/images/og-about.jpg'
+          content={`${BRAND_URL}/images/og-about.jpg`}
         />
 
         {/* Schema */}
@@ -95,7 +95,7 @@ export default function AboutPage() {
 
       <div className='vr-about-page'>
         <section className='vr-about-hero'>
-          <h1>About ValueRecipe</h1>
+          <h1>About {BRAND_NAME}</h1>
           <p>
             Where simple cooking meets smart technology — built to help you make
             the most of every ingredient.
@@ -105,7 +105,7 @@ export default function AboutPage() {
         <section className='vr-about-section vr-card'>
           <h3>Our Story</h3>
           <p>
-            ValueRecipe began with a simple idea: great food shouldn’t require
+            {BRAND_NAME} began with a simple idea: great food shouldn’t require
             expensive ingredients, complicated techniques, or hours in the
             kitchen. As a developer who loved experimenting in the kitchen, I
             often found myself overwhelmed by recipe websites full of clutter,
@@ -113,7 +113,7 @@ export default function AboutPage() {
           </p>
           <p>
             I wanted something better — clean, efficient, and built around the
-            things home cooks actually need. So ValueRecipe was created with a
+            things home cooks actually need. So {BRAND_NAME} was created with a
             mission to blend smart technology with practical cooking guidance,
             helping millions cook confidently at home.
           </p>
@@ -130,15 +130,17 @@ export default function AboutPage() {
         </section>
 
         <section className='vr-about-section vr-card'>
-          <h3>Why the Name "ValueRecipe"?</h3>
+          <h3>Why the Name "RekaDish"?</h3>
           <p>
-            Because value matters — not just in price, but in time, flavor,
-            simplicity, and confidence.
+            **RekaDish** is a unique name that blends the English word "Dish"
+            with the Māori word **"Reka,"** meaning **"tasty," "sweet," or
+            "pleasant."**
           </p>
           <p>
-            A “Value Recipe” is one that gives you more: more flavor, more
-            clarity, more usefulness, and more enjoyment. Every recipe we
-            publish follows that philosophy.
+            We chose RekaDish because it succinctly captures our mission:
+            providing a delightful, high-quality cooking experience (Reka) for
+            every meal (Dish). It signifies that our recipes are vetted for
+            maximum flavor and pleasure, making every dish a guaranteed success.
           </p>
         </section>
 
@@ -156,16 +158,16 @@ export default function AboutPage() {
         <section className='vr-about-section vr-card'>
           <h3>Where We’re Going</h3>
           <p>
-            ValueRecipe is evolving into a complete cooking companion — offering
-            personalized suggestions, meal planners, ingredient-matching
-            recipes, and more. We're continuously improving, shaped by real user
-            feedback and real cooking needs.
+            {BRAND_NAME} is evolving into a complete cooking companion —
+            offering personalized suggestions, meal planners,
+            ingredient-matching recipes, and more. We're continuously improving,
+            shaped by real user feedback and real cooking needs.
           </p>
         </section>
 
         <section className='vr-about-footer'>
           <p>
-            Thank you for being part of ValueRecipe. We're honored to help you
+            Thank you for being part of {BRAND_NAME}. We're honored to help you
             cook something amazing today.
           </p>
 

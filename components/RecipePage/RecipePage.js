@@ -11,6 +11,7 @@ import RecipeCard from '../RecipeCard';
 import AdSlot from '../AdSlot';
 import Comments from '../Comments/Comments';
 import { useUser } from '../UserContext';
+import { BRAND_NAME } from '../../lib/constants';
 
 export default function RecipePage({ recipe }) {
   /* -----------------------------------------------------
@@ -58,7 +59,7 @@ export default function RecipePage({ recipe }) {
   const handleShareRecipe = async () => {
     const url = window.location.href;
     const title = stableRecipe.title;
-    const text = `Check out this recipe on ValueRecipe: ${title}`;
+    const text = `Check out this recipe on ${BRAND_NAME}: ${title}`;
 
     try {
       if (navigator.share) {

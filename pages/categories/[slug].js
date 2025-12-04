@@ -7,7 +7,7 @@ import Breadcrumb from '../../components/Breadcrumb';
 import FilterPanel from '../../components/FilterPanel';
 import MealPlanner from '../../components/MealPlanner';
 import AdSlot from '../../components/AdSlot';
-import { REVALIDATE_TIME } from '../../lib/constants';
+import { REVALIDATE_TIME, BRAND_NAME } from '../../lib/constants';
 
 const PER_PAGE = 24;
 
@@ -252,10 +252,12 @@ export default function CategoryPage({
   return (
     <>
       <Head>
-        <title>{displayTitle} | ValueRecipe</title>
+        <title>
+          {displayTitle} | {BRAND_NAME}
+        </title>
         <meta
           name='description'
-          content={`Browse delicious ${displayTitle} at ValueRecipe. Find easy, top-rated recipes.`}
+          content={`Browse delicious ${displayTitle} at ${BRAND_NAME}. Find easy, top-rated recipes.`}
         />
       </Head>
 

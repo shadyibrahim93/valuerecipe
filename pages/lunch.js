@@ -6,7 +6,7 @@ import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
-import { REVALIDATE_TIME } from '../lib/constants';
+import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'lunch';
@@ -225,7 +225,9 @@ export default function LunchPage({
   return (
     <>
       <Head>
-        <title>{PAGE_TITLE} | ValueRecipe</title>
+        <title>
+          {PAGE_TITLE} | {BRAND_NAME}
+        </title>
         <meta
           name='description'
           content='Browse our collection of quick and healthy lunch recipes. Perfect for work or home.'

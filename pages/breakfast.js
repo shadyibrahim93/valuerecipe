@@ -7,6 +7,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
 import { REVALIDATE_TIME } from '../lib/constants';
+import { BRAND_NAME } from '../lib/constants';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'breakfast';
@@ -223,7 +224,9 @@ export default function BreakfastPage({
   return (
     <>
       <Head>
-        <title>{PAGE_TITLE} | ValueRecipe</title>
+        <title>
+          {PAGE_TITLE} | {BRAND_NAME}
+        </title>
         <meta
           name='description'
           content='Start your day right with our best breakfast recipes. From quick eggs to fluffy pancakes.'

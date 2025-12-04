@@ -24,8 +24,7 @@ const nextConfig = {
       return [
         {
           source: '/ads.txt',
-          destination:
-            'https://srv.adstxtmanager.com/19390/valuerecipekitchen.com'
+          destination: 'https://srv.adstxtmanager.com/19390/rekadish.com'
         }
       ];
     }

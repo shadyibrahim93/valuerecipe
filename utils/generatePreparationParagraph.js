@@ -1,4 +1,5 @@
 // components/RecipePage/utils/generatePreparationParagraph.js
+import { BRAND_NAME } from '../lib/constants';
 
 export default function generatePreparationParagraph(recipe) {
   const title = recipe.title;
@@ -32,7 +33,7 @@ export default function generatePreparationParagraph(recipe) {
   return `
     Before you start making your ${title}, make sure to select the number of
     servings you plan to cook. This is important because all ingredient
-    measurements on ValueRecipe automatically adjust to match your serving size,
+    measurements on ${BRAND_NAME} automatically adjust to match your serving size,
     helping you stay accurate and avoid mistakes as you cook.
 
     Once your servings are set, gather all your ingredients. This recipe uses

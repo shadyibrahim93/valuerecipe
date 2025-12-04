@@ -1,4 +1,6 @@
 // pages/privacy.js
+import { BRAND_NAME } from '../lib/constants';
+
 export default function PrivacyPage() {
   return (
     <div className='vr-legal-page'>
@@ -10,9 +12,9 @@ export default function PrivacyPage() {
 
         <h2>1. Introduction</h2>
         <p>
-          This Privacy Policy explains how ValueRecipe (“we,” “our,” “us”)
+          This Privacy Policy explains how {BRAND_NAME} (“we,” “our,” “us”)
           collects, uses, and protects information when you use our website. By
-          accessing ValueRecipe, you consent to this Privacy Policy.
+          accessing {BRAND_NAME}, you consent to this Privacy Policy.
         </p>
 
         <h2>2. Information We Collect</h2>
@@ -28,7 +30,7 @@ export default function PrivacyPage() {
         </ul>
 
         <h3>B. Information Collected Automatically</h3>
-        <p>When you use ValueRecipe, we automatically collect:</p>
+        <p>When you use {BRAND_NAME}, we automatically collect:</p>
         <ul>
           <li>IP address</li>
           <li>Device, operating system, and browser type</li>
@@ -87,9 +89,9 @@ export default function PrivacyPage() {
 
         <h2>5. Affiliate Links & Sponsored Content</h2>
         <p>
-          ValueRecipe may include affiliate links or sponsored posts. When users
-          click affiliate links, we may earn a commission at no extra cost to
-          the user. All sponsored content will be clearly disclosed.
+          {BRAND_NAME} may include affiliate links or sponsored posts. When
+          users click affiliate links, we may earn a commission at no extra cost
+          to the user. All sponsored content will be clearly disclosed.
         </p>
 
         <h2>6. User Rights</h2>
@@ -111,7 +113,7 @@ export default function PrivacyPage() {
 
         <h2>8. Children’s Privacy</h2>
         <p>
-          ValueRecipe is accessible to all ages. We do not knowingly collect
+          {BRAND_NAME} is accessible to all ages. We do not knowingly collect
           personal information from children under 13 without parental consent.
           If you believe information was collected from a child, please contact
           us for removal.
@@ -119,7 +121,7 @@ export default function PrivacyPage() {
 
         <h2>9. International Users</h2>
         <p>
-          ValueRecipe operates in New Jersey, USA. By using the site,
+          {BRAND_NAME} operates in New Jersey, USA. By using the site,
           international users consent to transferring their data to the United
           States.
         </p>
@@ -134,7 +136,7 @@ export default function PrivacyPage() {
         <h2>11. Changes to This Privacy Policy</h2>
         <p>
           We may update this Privacy Policy periodically. Continued use of
-          ValueRecipe after updates indicates acceptance of the revised policy.
+          {BRAND_NAME} after updates indicates acceptance of the revised policy.
         </p>
 
         <h2>12. Contact Us</h2>
