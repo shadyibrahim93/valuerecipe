@@ -119,7 +119,7 @@
 ================================ */
 
 .vr-search__button {
-  background: var(--vr-accent);
+  background: var(--vr-primary);
   color: #fff;
   border: none;
   padding: 0.55rem 1rem;
@@ -129,7 +129,7 @@
   transition: background 0.2s ease;
 
   &:hover {
-    background: #ff4c4c;
+    background: var(--vr-accent);
   }
 }
 

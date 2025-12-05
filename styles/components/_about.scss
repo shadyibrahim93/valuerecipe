@@ -51,7 +51,7 @@
 
   .vr-about-btn {
     display: inline-block;
-    background: #1e293b;
+    background: var(--vr-secondary);
     color: #fff;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
@@ -94,9 +94,9 @@
   }
 
   .vr-about-btn--secondary {
-    background: #1e293b; /* subtle contrast button */
+    background: var(--vr-secondary); /* subtle contrast button */
     color: #fff;
-    border: 2px solid #1e293b;
+    border: 2px solid var(--vr-secondary);
 
     &:hover {
       background: #111827;

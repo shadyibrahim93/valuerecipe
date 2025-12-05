@@ -270,7 +270,7 @@ export default function DessertPage({
             </span>
           </div>
 
-          <div className='vr-category-grid'>
+          <div className='vr-category__grid'>
             {recipes.map((r) => (
               <RecipeCard
                 key={r.id}

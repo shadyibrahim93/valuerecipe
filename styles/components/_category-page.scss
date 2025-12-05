@@ -89,9 +89,6 @@
    FILTER PANEL
 ------------------------------------------ */
 
-.vr-filter-sidebar__title {
-  margin-bottom: 0px;
-}
 .vr-filter-panel {
   display: flex;
   flex-direction: column;
@@ -184,9 +181,9 @@
   }
 
   &--active {
-    background: #1e293b;
+    background: var(--vr-secondary);
     color: #fff;
-    border-color: #1e293b;
+    border-color: var(--vr-secondary);
   }
 
   &--disabled {
@@ -202,7 +199,7 @@
 .vr-slider {
   width: 100%;
   cursor: pointer;
-  accent-color: #1e293b;
+  accent-color: var(--vr-secondary);
 }
 
 .vr-filter-slider__scale {
@@ -243,9 +240,9 @@
   }
 
   &__apply {
-    background: #1e293b;
+    background: var(--vr-secondary);
     color: #fff;
-    border-color: #1e293b;
+    border-color: var(--vr-secondary);
 
     &:hover {
       background: #334155;
@@ -282,11 +279,12 @@
   color: #64748b;
 }
 
-/* Recipe cards grid */
-.vr-category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  grid-column-gap: 1rem;
+.vr-section {
+  margin-bottom: 1rem;
+}
+
+.vr-category__container {
+  width: 100%;
 }
 
 /* -----------------------------------------
@@ -330,7 +328,7 @@
 
 .vr-filter-drawer {
   width: 100%;
-  max-height: 100vh;
+  max-height: 90vh;
   background: #fff;
   border-radius: 16px 16px 0 0;
   padding: 1rem;

@@ -88,7 +88,7 @@ export default function Comments({
 
   return (
     <div className='vr-card'>
-      <div className='vr-category'>
+      <div className='vr-section'>
         <h3 className='vr-category__title'>Comments</h3>
 
         {/* RECIPE RATING INSIDE COMMENTS SECTION */}

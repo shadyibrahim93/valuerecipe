@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiPlus, FiX } from 'react-icons/fi';
-
 import { isFavorite, toggleFavorite } from '../lib/favorites';
 import { useMealPlanner } from './MealPlannerContext';
 import RecipeCategoryMenu from './RecipeCategoryMenu';

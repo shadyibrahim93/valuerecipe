@@ -11,6 +11,7 @@ const IGNORE_LIST = [
   '.next',
   '.vscode',
   '.DS_Store',
+  'public',
   outputFileName
 ];
 

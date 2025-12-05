@@ -15,7 +15,7 @@
   .vr-category__title {
     font-size: 1.2rem;
     letter-spacing: 0.02em;
-    color: #ff6b6b;
+    color: var(--vr-accent);
   }
 }
 
@@ -70,7 +70,7 @@
 
     &:focus {
       outline: none;
-      border-color: #ff6b6b;
+      border-color: var(--vr-accent);
       box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.55);
       background: #fff;
     }
@@ -88,7 +88,7 @@
     cursor: pointer;
     font-weight: 600;
     font-size: 0.9rem;
-    background: #ff6b6b;
+    background: var(--vr-accent);
     color: #fff;
     box-shadow: 0 8px 18px rgba(255, 107, 107, 0.35);
     transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
@@ -150,7 +150,7 @@
 
 .vr-comment__name {
   font-weight: 600;
-  color: #ff6b6b;
+  color: var(--vr-accent);
   font-size: 0.95rem;
 }
 
@@ -229,7 +229,7 @@
 
     &:hover {
       background: rgba(255, 107, 107, 0.08);
-      color: #ff6b6b;
+      color: var(--vr-accent);
     }
   }
 }
@@ -258,7 +258,7 @@
 
     &:focus {
       outline: none;
-      border-color: #ff6b6b;
+      border-color: var(--vr-accent);
       box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.55);
     }
   }
@@ -297,7 +297,7 @@
   gap: 0.7rem;
 
   .vr-comment__name {
-    color: #ff6b6b;
+    color: var(--vr-accent);
   }
 }
 
@@ -340,7 +340,7 @@
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  background: #ff6b6b;
+  background: var(--vr-accent);
   color: #fff;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 

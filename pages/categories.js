@@ -4,9 +4,9 @@ import { useEffect, useState, useMemo } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb.js';
-import MealPlanner from '../components/MealPlanner.js';
 import { useModal } from '../components/ModalContext';
 import { BRAND_NAME, BRAND_URL } from '../lib/constants'; // BRAND_URL ADDED
+import SideBar from '../components/SideBar';
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
@@ -18,7 +18,7 @@ export default function Home() {
       Load Trending Recipes (First 8)
   ---------------------------------------- */
   const loadTrending = async () => {
-    const res = await fetch(`/api/recipes?page=1&per_page=8`);
+    const res = await fetch(`/api/recipes?page=1&per_page=11`);
     const json = await res.json();
     setRecipes(json.data || []);
   };
@@ -51,7 +51,7 @@ export default function Home() {
     const res = await fetch(
       `/api/recipes?cuisine=${encodeURIComponent(
         cuisineName
-      )}&page=1&per_page=8`
+      )}&page=1&per_page=11`
     );
     const json = await res.json();
 
@@ -237,7 +237,7 @@ export default function Home() {
           {cuisines.map((cuisineName) => (
             <section
               key={cuisineName}
-              className='vr-category'
+              className='vr-section'
               itemScope
               itemType='https://schema.org/ItemList'
             >
@@ -256,11 +256,25 @@ export default function Home() {
               </div>
 
               <div className='vr-category__grid'>
-                {(cuisineRecipes[cuisineName] || []).map((r) => (
-                  <RecipeCard
-                    key={r.id}
-                    recipe={r}
-                  />
+                {(cuisineRecipes[cuisineName] || []).map((r, index) => (
+                  <>
+                    <RecipeCard
+                      key={r.id}
+                      recipe={r}
+                    />
+
+                    {/* Insert Ad after every 6th recipe */}
+                    {(index + 1) % 6 === 0 && (
+                      <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                        <AdSlot
+                          id='101'
+                          position='in-feed'
+                          height='100%'
+                        />
+                      </article>
+                    )}
+                  </>
                 ))}
               </div>
             </section>
@@ -268,13 +282,7 @@ export default function Home() {
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <aside
-          className='vr-sidebar'
-          id='planner'
-        >
-          <MealPlanner />
-          <AdSlot position='header' />
-        </aside>
+        <SideBar />
       </div>
     </>
   );

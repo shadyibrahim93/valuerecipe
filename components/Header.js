@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'; // 1. Import useRouter
 import { useUser } from './UserContext';
 import { supabase } from '../lib/supabaseClient';
 import CreateFromIngredients from './CreateFromIngredients.js';
+import { BRAND_NAME } from '../lib/constants.js';
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
@@ -36,9 +37,14 @@ export default function Header() {
           {/* LEFT — Logo */}
           <Link href='/'>
             <div className='vr-header__brand'>
-              <div className='vr-header__logo'>VR</div>
+              <div className='vr-header__logo'>
+                <img
+                  src='/images/logo/brand_icon_small_3.png'
+                  alt='Value Recipe Logo'
+                />
+              </div>
               <div className='vr-header__brand-logo'>
-                <span className='vr-header__title'>ValueRecipe</span>
+                <span className='vr-header__title'>{BRAND_NAME}</span>
                 <span className='vr-header__slogan'>
                   Make the Most of Every Ingredient.
                 </span>

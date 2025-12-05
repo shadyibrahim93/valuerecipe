@@ -7,14 +7,16 @@ export default async function handler(req, res) {
   try {
     if (!q) return res.status(400).json({ error: 'Missing query' });
 
-    const term = `%${q}%`;
+    // 1. THE LOGIC TRICK
+    // We replace spaces with " or " to broaden the search.
+    // User types: "chicken pasta"
+    // We send: "chicken or pasta"
+    // The database finds ALL of them, but ranks the "Both" matches highest.
+    const processedQuery = q.trim().split(/\s+/).join(' or ');
 
+    // 2. Call the RPC function
     const { data, error } = await supa
-      .from('recipes')
-      .select('*')
-      .or(
-        `title.ilike.${term},cuisine.ilike.${term},description.ilike.${term},difficulty.ilike.${term},serving_time.ilike.${term}`
-      )
+      .rpc('search_recipes_ranked', { search_query: processedQuery })
       .limit(40);
 
     if (error) {

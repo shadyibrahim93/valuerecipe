@@ -37,16 +37,17 @@ export default function Breadcrumb({ recipe }) {
         </li>
 
         {crumbs.map((c, i) => (
-          <li key={i}>
+          <>
             <span> / </span>
-
-            {/* Last item -> active, not clickable */}
-            {i === crumbs.length - 1 ? (
-              <span className='active'>{c.label}</span>
-            ) : (
-              <Link href={c.href}>{c.label}</Link>
-            )}
-          </li>
+            <li key={i}>
+              {/* Last item -> active, not clickable */}
+              {i === crumbs.length - 1 ? (
+                <span className='active'>{c.label}</span>
+              ) : (
+                <Link href={c.href}>{c.label}</Link>
+              )}
+            </li>
+          </>
         ))}
       </ul>
     </nav>

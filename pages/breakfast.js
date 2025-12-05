@@ -2,12 +2,12 @@ import Head from 'next/head';
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
-import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
-import MealPlanner from '../components/MealPlanner';
 import { REVALIDATE_TIME } from '../lib/constants';
 import { BRAND_NAME } from '../lib/constants';
+import SideBar from '../components/SideBar';
+import AdSlot from '../components/AdSlot';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'breakfast';
@@ -271,12 +271,26 @@ export default function BreakfastPage({
             </span>
           </div>
 
-          <div className='vr-category-grid'>
-            {recipes.map((r) => (
-              <RecipeCard
-                key={r.id}
-                recipe={r}
-              />
+          <div className='vr-category__grid'>
+            {recipes.map((r, index) => (
+              <>
+                <RecipeCard
+                  key={r.id}
+                  recipe={r}
+                />
+
+                {/* Insert Ad after every 6th recipe */}
+                {(index + 1) % 6 === 0 && (
+                  <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                    {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                    <AdSlot
+                      id='101'
+                      position='in-feed'
+                      height='100%'
+                    />
+                  </article>
+                )}
+              </>
             ))}
           </div>
 
@@ -300,10 +314,7 @@ export default function BreakfastPage({
           )}
         </main>
 
-        <aside className='vr-sidebar'>
-          <MealPlanner />
-          <AdSlot position='header' />
-        </aside>
+        <SideBar />
       </div>
     </>
   );

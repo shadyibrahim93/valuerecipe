@@ -19,7 +19,7 @@ export async function getStaticProps() {
     .select('*')
     .order('rating', { ascending: false })
     .order('rating_count', { ascending: false })
-    .limit(8);
+    .limit(11);
 
   // --- B. Fetch a batch to determine Cuisines & Serving Times ---
   // We fetch a larger batch to find what tags/cuisines exist
@@ -35,14 +35,14 @@ export async function getStaticProps() {
     const key = r.serving_time?.trim();
     if (!key) return acc;
     if (!acc[key]) acc[key] = [];
-    if (acc[key].length < 8) acc[key].push(r);
+    if (acc[key].length < 11) acc[key].push(r);
     return acc;
   }, {});
 
   // 2. Process Unique Cuisines
   const uniqueCuisines = [
     ...new Set(all.map((r) => r.cuisine?.trim()).filter(Boolean))
-  ].slice(0, 8); // Limit to top 8 cuisines
+  ].slice(0, 11); // Limit to top 11 cuisines
 
   // --- C. Fetch Recipes for those Specific Cuisines ---
   // We use Promise.all to fetch them in parallel (FAST)
@@ -54,7 +54,7 @@ export async function getStaticProps() {
         .from('recipes')
         .select('*')
         .eq('cuisine', cuisine)
-        .limit(8);
+        .limit(11);
 
       cuisineRecipes[cuisine] = data || [];
     })
@@ -266,7 +266,7 @@ export default function Home({
               aria-labelledby='top-rated-heading'
             >
               <div className='vr-category__header'>
-                <h3 className='vr-category__title'>Trending Recipes</h3>
+                <h3 className='vr-category__title'>Top Rated Recipes</h3>
                 <Link
                   href={`/recipes`}
                   className='vr-category__link'
@@ -274,12 +274,26 @@ export default function Home({
                   View all recipes →
                 </Link>
               </div>
-              <div className='vr-category-grid'>
-                {topRated.map((recipe) => (
-                  <RecipeCard
-                    key={recipe.id}
-                    recipe={recipe}
-                  />
+              <div className='vr-category__grid'>
+                {topRated.map((r, index) => (
+                  <>
+                    <RecipeCard
+                      key={r.id}
+                      recipe={r}
+                    />
+
+                    {/* Insert Ad after every 6th recipe */}
+                    {(index + 1) % 6 === 0 && (
+                      <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                        <AdSlot
+                          id='101'
+                          position='in-feed'
+                          height='100%'
+                        />
+                      </article>
+                    )}
+                  </>
                 ))}
               </div>
             </section>
@@ -295,7 +309,7 @@ export default function Home({
                 {Object.entries(servingTimeRecipes).map(([time, recipes]) => (
                   <div
                     key={time}
-                    className='vr-category'
+                    className='vr-section'
                     itemScope
                     itemType='https://schema.org/ItemList'
                   >
@@ -311,11 +325,25 @@ export default function Home({
                       </Link>
                     </div>
                     <div className='vr-category__grid'>
-                      {recipes.map((recipe) => (
-                        <RecipeCard
-                          key={recipe.id}
-                          recipe={recipe}
-                        />
+                      {recipes.map((r, index) => (
+                        <>
+                          <RecipeCard
+                            key={r.id}
+                            recipe={r}
+                          />
+
+                          {/* Insert Ad after every 6th recipe */}
+                          {(index + 1) % 6 === 0 && (
+                            <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                              {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                              <AdSlot
+                                id='101'
+                                position='in-feed'
+                                height='100%'
+                              />
+                            </article>
+                          )}
+                        </>
                       ))}
                     </div>
                   </div>
@@ -334,7 +362,7 @@ export default function Home({
                 {cuisines.map((cuisineName) => (
                   <div
                     key={cuisineName}
-                    className='vr-category'
+                    className='vr-section'
                     itemScope
                     itemType='https://schema.org/ItemList'
                   >
@@ -350,11 +378,25 @@ export default function Home({
                       </Link>
                     </div>
                     <div className='vr-category__grid'>
-                      {(cuisineRecipes[cuisineName] || []).map((recipe) => (
-                        <RecipeCard
-                          key={recipe.id}
-                          recipe={recipe}
-                        />
+                      {(cuisineRecipes[cuisineName] || []).map((r, index) => (
+                        <>
+                          <RecipeCard
+                            key={r.id}
+                            recipe={r}
+                          />
+
+                          {/* Insert Ad after every 6th recipe */}
+                          {(index + 1) % 6 === 0 && (
+                            <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                              {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                              <AdSlot
+                                id='101'
+                                position='in-feed'
+                                height='100%'
+                              />
+                            </article>
+                          )}
+                        </>
                       ))}
                     </div>
                   </div>

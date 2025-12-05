@@ -202,7 +202,6 @@ export default function FilterPanel({
   // REMOVED: <aside> wrapper. This now only contains the inner content.
   const FilterContent = (
     <div className='vr-filter-panel'>
-      <h3 className='vr-filter-sidebar__title'>Filter</h3>
       {/* SEARCH */}
       <div className='vr-filter-group'>
         <label className='vr-filter-label'>Search Ingredients</label>
@@ -344,6 +343,7 @@ export default function FilterPanel({
 
       {/* 2. Desktop Content - Wrapped in sidebar ASIDE here */}
       <aside className='vr-filter-sidebar vr-filter-sidebar--desktop'>
+        <h3 className='vr-filter-sidebar__title'>Filter</h3>
         {FilterContent}
       </aside>
 

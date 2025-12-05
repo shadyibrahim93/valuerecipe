@@ -7,6 +7,8 @@ import { useEffect, useState, useMemo } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import CreateFromIngredients from '../components/CreateFromIngredients';
 import Link from 'next/link';
+import AdSlot from '../components/AdSlot';
+import SideBar from '../components/SideBar';
 
 export default function SearchResultsPage() {
   const router = useRouter();
@@ -43,8 +45,8 @@ export default function SearchResultsPage() {
     // Sort by rating DESC
     all.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
-    // Take top 8
-    setTrending(all.slice(0, 8));
+    // Take top 11
+    setTrending(all.slice(0, 11));
   };
 
   useEffect(() => {
@@ -173,70 +175,90 @@ export default function SearchResultsPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(searchSchema) }}
         />
       </Head>
+      <div className='vr-home-layout'>
+        <div className='vr-category__container'>
+          <div className='vr-card'>
+            <h1 className='vr-category__title'>
+              {q ? `Search results for "${q}"` : 'Search recipes'}
+            </h1>
 
-      <div className='vr-search-results'>
-        <h1 className='vr-search-results__title'>
-          {q ? `Search results for "${q}"` : 'Search recipes'}
-        </h1>
-
-        {/* RESULTS FOUND */}
-        {loading ? (
-          <p className='vr-search-results__empty'>Searching…</p>
-        ) : results.length > 0 ? (
-          <>
-            <div className='vr-search-results__grid'>
-              {results.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                />
-              ))}
-            </div>
-            <p className='vr-search-results__empty'>
-              Don't like what you see? Create a recipe from ingredients you
-              have!
-            </p>
-            <div className='vr-card'>
-              <CreateFromIngredients />
-            </div>
-          </>
-        ) : (
-          <>
-            {/* NO RESULTS FOUND MESSAGE */}
-            <p className='vr-search-results__empty'>
-              No recipes found. Try another keyword, or check below for recipe
-              ideas.
-            </p>
-
-            {/* CREATE FROM INGREDIENTS */}
-            <div className='vr-card'>
-              <CreateFromIngredients />
-            </div>
-
-            {/* TRENDING NOW (TOP RATED) */}
-            <div className='vr-card'>
-              <div className='vr-category'>
-                <h3 className='vr-category__title'>Trending Now</h3>
-
-                <div className='vr-category__grid'>
-                  {trending.map((recipe) => (
+            {/* RESULTS FOUND */}
+            {loading ? (
+              <p className='vr-search-results__empty'>Searching…</p>
+            ) : results.length > 0 ? (
+              <div className='vr-category__grid'>
+                {results.map((recipe, index) => (
+                  <>
                     <RecipeCard
                       key={recipe.id}
                       recipe={recipe}
                     />
-                  ))}
-                </div>
 
-                {/* VIEW MORE BUTTON - GOES TO HOME PAGE */}
-                <div className='vr-viewmore'>
-                  <Link href='/recipes'>
-                    <button className='vr-viewmore__btn'>View More →</button>
-                  </Link>
-                </div>
+                    {/* Insert Ad after every 6th recipe */}
+                    {(index + 1) % 6 === 0 && (
+                      <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                        <AdSlot
+                          id='101'
+                          position='in-feed'
+                          height='100%'
+                        />
+                      </article>
+                    )}
+                  </>
+                ))}
+              </div>
+            ) : (
+              <p className='vr-search-results__empty'>
+                No recipes found. Try another keyword, or check below for recipe
+                ideas.
+              </p>
+            )}
+          </div>
+
+          {/* CREATE FROM INGREDIENTS - ALWAYS VISIBLE */}
+          <div className='vr-card'>
+            <CreateFromIngredients />
+          </div>
+
+          {/* TRENDING NOW (TOP RATED) - ALWAYS VISIBLE */}
+          <div className='vr-card'>
+            <div className='vr-section'>
+              <div className='vr-category__header'>
+                <h3 className='vr-category__title'>Trending Recipes</h3>
+                <Link
+                  href={`/recipes`}
+                  className='vr-category__link'
+                >
+                  View all recipes →
+                </Link>
+              </div>
+              <div className='vr-category__grid'>
+                {trending.map((recipe, index) => (
+                  <>
+                    <RecipeCard
+                      key={recipe.id}
+                      recipe={recipe}
+                    />
+
+                    {/* Insert Ad after every 6th recipe */}
+                    {(index + 1) % 6 === 0 && (
+                      <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                        <AdSlot
+                          id='101'
+                          position='in-feed'
+                          height='100%'
+                        />
+                      </article>
+                    )}
+                  </>
+                ))}
               </div>
             </div>
-          </>
-        )}
+          </div>
+        </div>
+        <SideBar />
       </div>
     </>
   );

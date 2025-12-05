@@ -1,5 +1,5 @@
 .vr-footer {
-  background: #f8fafc;
+  background: #f8fcfa;
   border-top: 1px solid #e2e8f0;
   padding: 3rem 1rem 2rem;
   &__container {
@@ -37,7 +37,7 @@
     }
 
     button {
-      background: #1e293b;
+      background: var(--vr-primary);
       color: #fff;
       padding: 0.65rem 1.25rem;
       border-radius: 6px;
@@ -80,7 +80,7 @@
           color: #475569;
 
           &:hover {
-            color: #1e293b;
+            color: var(--vr-secondary);
           }
         }
       }
@@ -118,6 +118,6 @@
   font-size: inherit;
 
   &:hover {
-    color: #1e293b;
+    color: var(--vr-secondary);
   }
 }

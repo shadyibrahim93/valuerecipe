@@ -6,6 +6,7 @@ import AdSlot from '../components/AdSlot';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
 import { REVALIDATE_TIME } from '../lib/constants';
+import SideBar from '../components/SideBar';
 
 const PER_PAGE = 24;
 
@@ -255,12 +256,26 @@ export default function Recipes({
             </span>
           </div>
 
-          <div className='vr-category-grid'>
-            {recipes.map((r) => (
-              <RecipeCard
-                key={r.id}
-                recipe={r}
-              />
+          <div className='vr-category__grid'>
+            {recipes.map((r, index) => (
+              <>
+                <RecipeCard
+                  key={r.id}
+                  recipe={r}
+                />
+
+                {/* Insert Ad after every 6th recipe */}
+                {(index + 1) % 6 === 0 && (
+                  <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                    {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                    <AdSlot
+                      id='101'
+                      position='in-feed'
+                      height='100%'
+                    />
+                  </article>
+                )}
+              </>
             ))}
           </div>
 
@@ -274,7 +289,7 @@ export default function Recipes({
           )}
 
           {!hasMore && !isLoading && recipes.length > 0 && (
-            <div className='vr-end-of-list'>
+            <div className='vr-end-message'>
               <span>You've reached the end of the recipes.</span>
             </div>
           )}
@@ -287,13 +302,7 @@ export default function Recipes({
         </main>
 
         {/* RIGHT SIDEBAR */}
-        <aside
-          className='vr-sidebar'
-          id='planner'
-        >
-          <MealPlanner />
-          <AdSlot position='header' />
-        </aside>
+        <SideBar />
       </div>
     </>
   );

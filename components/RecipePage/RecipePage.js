@@ -109,7 +109,7 @@ export default function RecipePage({ recipe }) {
           const resIng = await fetch(
             `/api/recipes?ingredients=${encodeURIComponent(
               ingredientNames
-            )}&match_type=any&page=1&per_page=8`
+            )}&match_type=any&page=1&per_page=9`
           );
           const jsonIng = await resIng.json();
 
@@ -131,7 +131,7 @@ export default function RecipePage({ recipe }) {
           const resServe = await fetch(
             `/api/recipes?serving_time=${encodeURIComponent(
               stableRecipe.serving_time
-            )}&page=1&per_page=8`
+            )}&page=1&per_page=9`
           );
           const jsonServe = await resServe.json();
 
@@ -153,7 +153,7 @@ export default function RecipePage({ recipe }) {
           const resCui = await fetch(
             `/api/recipes?cuisine=${encodeURIComponent(
               stableRecipe.cuisine
-            )}&page=1&per_page=8`
+            )}&page=1&per_page=9`
           );
           const jsonCui = await resCui.json();
 
@@ -228,11 +228,25 @@ export default function RecipePage({ recipe }) {
               </p>
 
               <div className='vr-category__grid'>
-                {ingredientMatchRecipes.map((r) => (
-                  <RecipeCard
-                    key={r.id}
-                    recipe={r}
-                  />
+                {ingredientMatchRecipes.map((r, index) => (
+                  <>
+                    <RecipeCard
+                      key={r.id}
+                      recipe={r}
+                    />
+
+                    {/* Insert Ad after every 6th recipe */}
+                    {(index + 1) % 6 === 0 && (
+                      <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                        <AdSlot
+                          id='101'
+                          position='in-feed'
+                          height='100%'
+                        />
+                      </article>
+                    )}
+                  </>
                 ))}
               </div>
             </section>
@@ -258,11 +272,25 @@ export default function RecipePage({ recipe }) {
               </p>
 
               <div className='vr-category__grid'>
-                {servingTimeRecipes.map((r) => (
-                  <RecipeCard
-                    key={r.id}
-                    recipe={r}
-                  />
+                {servingTimeRecipes.map((r, index) => (
+                  <>
+                    <RecipeCard
+                      key={r.id}
+                      recipe={r}
+                    />
+
+                    {/* Insert Ad after every 6th recipe */}
+                    {(index + 1) % 6 === 0 && (
+                      <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                        <AdSlot
+                          id='101'
+                          position='in-feed'
+                          height='100%'
+                        />
+                      </article>
+                    )}
+                  </>
                 ))}
               </div>
             </section>
@@ -286,11 +314,25 @@ export default function RecipePage({ recipe }) {
               </p>
 
               <div className='vr-category__grid'>
-                {cuisineMatchRecipes.map((r) => (
-                  <RecipeCard
-                    key={r.id}
-                    recipe={r}
-                  />
+                {cuisineMatchRecipes.map((r, index) => (
+                  <>
+                    <RecipeCard
+                      key={r.id}
+                      recipe={r}
+                    />
+
+                    {/* Insert Ad after every 6th recipe */}
+                    {(index + 1) % 6 === 0 && (
+                      <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                        <AdSlot
+                          id='101'
+                          position='in-feed'
+                          height='100%'
+                        />
+                      </article>
+                    )}
+                  </>
                 ))}
               </div>
             </section>
@@ -308,7 +350,13 @@ export default function RecipePage({ recipe }) {
             recipe={stableRecipe}
             servings={servings}
           />
-          <AdSlot position='recipe-sidebar' />
+          <AdSlot
+            id='102'
+            className='vr-card'
+            position='home-sidebar'
+            placement='sticky'
+            height='auto'
+          />
         </aside>
       </div>
 

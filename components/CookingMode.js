@@ -1,6 +1,7 @@
 import Timer from './Timer';
 import { useState } from 'react';
 import Image from 'next/image';
+import AdSlot from './AdSlot';
 
 export default function CookingMode({
   instructions = [],
@@ -161,6 +162,14 @@ export default function CookingMode({
           </button>
 
           <Timer />
+        </div>
+        {/* --- NEW AD SLOT --- */}
+        <div>
+          <AdSlot
+            id='105'
+            position='cooking-mode-footer'
+            marginTop='20px'
+          />
         </div>
       </div>
     </div>

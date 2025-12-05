@@ -38,15 +38,15 @@
   }
 
   &__logo {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--vr-accent), var(--vr-accent-2));
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
     color: #fff;
+
+    img {
+      width: 42px;
+    }
   }
 
   &__title {

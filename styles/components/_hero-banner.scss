@@ -22,7 +22,7 @@
     margin: 0 0 0.25rem 0;
 
     @media screen and (max-width: 1078px) {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
     }
   }
 
@@ -38,13 +38,13 @@
   }
 
   &__badge {
-    background: rgb(245 93 93);
+    background: var(--vr-accent);
     padding: 6px 8px;
     border-radius: 8px;
     font-size: 0.9rem;
     color: white;
     font-weight: 700;
-    border: 2px solid rgb(245 93 93);
+    border: 2px solid var(--vr-accent);
 
     &:hover {
       border: 2px solid white;

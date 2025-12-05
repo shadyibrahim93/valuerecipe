@@ -17,6 +17,15 @@ class MyDocument extends Document {
             name='theme-color'
             content='#FF6B6B'
           />
+
+          {/* 👇 GOOGLE ADSENSE VERIFICATION SCRIPT */}
+          <script
+            async
+            src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4846660348676156'
+            crossOrigin='anonymous'
+          ></script>
+
+          {/* 1. Privacy & Consent Scripts (Must load first) */}
           <script
             src='https://cmp.gatekeeperconsent.com/min.js'
             data-cfasync='false'
@@ -25,18 +34,20 @@ class MyDocument extends Document {
             src='https://the.gatekeeperconsent.com/cmp.min.js'
             data-cfasync='false'
           ></script>
-          {/* Ezoic Standalone Ads */}
+
+          {/* 2. Ezoic Standalone Script */}
           <script
             async
             src='//www.ezojs.com/ezoic/sa.min.js'
           ></script>
 
+          {/* 3. Initialize Ezoic Command Queue */}
           <script
             dangerouslySetInnerHTML={{
               __html: `
-        window.ezstandalone = window.ezstandalone || {};
-        ezstandalone.cmd = ezstandalone.cmd || [];
-      `
+                window.ezstandalone = window.ezstandalone || {};
+                ezstandalone.cmd = ezstandalone.cmd || [];
+              `
             }}
           />
         </Head>

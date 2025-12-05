@@ -17,7 +17,7 @@
 }
 
 .vr-breadcrumb a {
-  color: #ff6b6b;
+  color: var(--vr-accent);
   text-decoration: none;
   font-weight: 600;
 }
@@ -25,4 +25,13 @@
 .vr-breadcrumb .active {
   color: #222;
   font-weight: 700;
+  /* limit width and prevent overflow on small screens */
+  @media screen and (max-width: 768px) {
+    max-width: min(50ch, 50vw);
+  }
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

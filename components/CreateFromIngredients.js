@@ -1,6 +1,7 @@
 // components/CreateFromIngredients.js
 import { useState, useEffect } from 'react';
 import RecipeCard from './RecipeCard';
+import AdSlot from './AdSlot';
 
 export default function CreateFromIngredients() {
   const [ingredientInput, setIngredientInput] = useState('');
@@ -103,11 +104,25 @@ export default function CreateFromIngredients() {
 
       {!loading && recipes.length > 0 && (
         <div className='vr-category__grid'>
-          {recipes.map((r) => (
-            <RecipeCard
-              key={r.id}
-              recipe={r}
-            />
+          {recipes.map((r, index) => (
+            <>
+              <RecipeCard
+                key={r.id}
+                recipe={r}
+              />
+
+              {/* Insert Ad after every 6th recipe */}
+              {(index + 1) % 6 === 0 && (
+                <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                  {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
+                  <AdSlot
+                    id='101'
+                    position='in-feed'
+                    height='100%'
+                  />
+                </article>
+              )}
+            </>
           ))}
         </div>
       )}
