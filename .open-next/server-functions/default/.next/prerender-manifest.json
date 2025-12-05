@@ -1,0 +1,153 @@
+{
+  "version": 4,
+  "routes": {
+    "/categories": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/breakfast": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/breakfast.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/dessert": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/dessert.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/dinner": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/dinner.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/": {
+      "initialRevalidateSeconds": 60,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/index.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/recipes": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/lunch": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/lunch.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/search": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/search.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    }
+  },
+  "dynamicRoutes": {
+    "/categories/[slug]": {
+      "routeRegex": "^/categories/([^/]+?)(?:/)?$",
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/[slug].json",
+      "fallback": null,
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/([^/]+?)\\.json$",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/recipes/[id]": {
+      "routeRegex": "^/recipes/([^/]+?)(?:/)?$",
+      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/[id].json",
+      "fallback": null,
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/([^/]+?)\\.json$",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    }
+  },
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "f58ccd8a1133612bef1e4060b8a306d0",
+    "previewModeSigningKey": "56dac50f17a77a7119d5dbd55f038a63c3cf468dbdf256075046374592bbffba",
+    "previewModeEncryptionKey": "fe3eb87ff5a6e72d7d8630cb7f3c57c51254ea632ab920ac18af316c20cdb161"
+  }
+}

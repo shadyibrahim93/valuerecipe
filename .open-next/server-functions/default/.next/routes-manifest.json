@@ -1,0 +1,310 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [
+      {
+        "source": "/ads.txt",
+        "destination": "https://srv.adstxtmanager.com/19390/rekadish.com",
+        "regex": "^/ads\\.txt(?:/)?$"
+      }
+    ],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/recipes/[id]",
+      "regex": "^/api/recipes/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/recipes/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/reviews/[id]",
+      "regex": "^/api/reviews/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/reviews/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/categories/[slug]",
+      "regex": "^/categories/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/categories/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/recipes/[id]",
+      "regex": "^/recipes/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/recipes/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/404",
+      "regex": "^/404(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/404(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/admin/recipes",
+      "regex": "^/admin/recipes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/recipes(?:/)?$"
+    },
+    {
+      "page": "/api/ads",
+      "regex": "^/api/ads(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/ads(?:/)?$"
+    },
+    {
+      "page": "/api/ai-generate",
+      "regex": "^/api/ai\\-generate(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/ai\\-generate(?:/)?$"
+    },
+    {
+      "page": "/api/auth/mock",
+      "regex": "^/api/auth/mock(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/mock(?:/)?$"
+    },
+    {
+      "page": "/api/favorites/toggle",
+      "regex": "^/api/favorites/toggle(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/favorites/toggle(?:/)?$"
+    },
+    {
+      "page": "/api/newsletter/newsleter-unsubscribe",
+      "regex": "^/api/newsletter/newsleter\\-unsubscribe(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/newsletter/newsleter\\-unsubscribe(?:/)?$"
+    },
+    {
+      "page": "/api/newsletter/newsletter",
+      "regex": "^/api/newsletter/newsletter(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/newsletter/newsletter(?:/)?$"
+    },
+    {
+      "page": "/api/newsletter/newsletter-status",
+      "regex": "^/api/newsletter/newsletter\\-status(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/newsletter/newsletter\\-status(?:/)?$"
+    },
+    {
+      "page": "/api/newsletter/newsletter-subscribe",
+      "regex": "^/api/newsletter/newsletter\\-subscribe(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/newsletter/newsletter\\-subscribe(?:/)?$"
+    },
+    {
+      "page": "/api/newsletter/newsletter-unsubscribe",
+      "regex": "^/api/newsletter/newsletter\\-unsubscribe(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/newsletter/newsletter\\-unsubscribe(?:/)?$"
+    },
+    {
+      "page": "/api/rate-recipe",
+      "regex": "^/api/rate\\-recipe(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/rate\\-recipe(?:/)?$"
+    },
+    {
+      "page": "/api/recipes",
+      "regex": "^/api/recipes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/recipes(?:/)?$"
+    },
+    {
+      "page": "/api/search",
+      "regex": "^/api/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/search(?:/)?$"
+    },
+    {
+      "page": "/api/search-autocomplete",
+      "regex": "^/api/search\\-autocomplete(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/search\\-autocomplete(?:/)?$"
+    },
+    {
+      "page": "/breakfast",
+      "regex": "^/breakfast(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/breakfast(?:/)?$"
+    },
+    {
+      "page": "/categories",
+      "regex": "^/categories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/categories(?:/)?$"
+    },
+    {
+      "page": "/dessert",
+      "regex": "^/dessert(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dessert(?:/)?$"
+    },
+    {
+      "page": "/dinner",
+      "regex": "^/dinner(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dinner(?:/)?$"
+    },
+    {
+      "page": "/favorites",
+      "regex": "^/favorites(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favorites(?:/)?$"
+    },
+    {
+      "page": "/lunch",
+      "regex": "^/lunch(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/lunch(?:/)?$"
+    },
+    {
+      "page": "/planner",
+      "regex": "^/planner(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/planner(?:/)?$"
+    },
+    {
+      "page": "/privacy",
+      "regex": "^/privacy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/privacy(?:/)?$"
+    },
+    {
+      "page": "/profile",
+      "regex": "^/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/profile(?:/)?$"
+    },
+    {
+      "page": "/recipes",
+      "regex": "^/recipes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/recipes(?:/)?$"
+    },
+    {
+      "page": "/search",
+      "regex": "^/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/search(?:/)?$"
+    },
+    {
+      "page": "/terms",
+      "regex": "^/terms(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms(?:/)?$"
+    }
+  ],
+  "dataRoutes": [
+    {
+      "page": "/",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/index\\.json$"
+    },
+    {
+      "page": "/admin/recipes",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/admin/recipes\\.json$"
+    },
+    {
+      "page": "/breakfast",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/breakfast\\.json$"
+    },
+    {
+      "page": "/categories",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories\\.json$"
+    },
+    {
+      "page": "/categories/[slug]",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/(?<nxtPslug>[^/]+?)\\.json$"
+    },
+    {
+      "page": "/dessert",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/dessert\\.json$"
+    },
+    {
+      "page": "/dinner",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/dinner\\.json$"
+    },
+    {
+      "page": "/lunch",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/lunch\\.json$"
+    },
+    {
+      "page": "/recipes",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes\\.json$"
+    },
+    {
+      "page": "/recipes/[id]",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/(?<nxtPid>[^/]+?)\\.json$"
+    },
+    {
+      "page": "/search",
+      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/search\\.json$"
+    }
+  ],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

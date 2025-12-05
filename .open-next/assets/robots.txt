@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Disallow: /
+
+# Host
+Host: https://rekadish.com
+
+# Sitemaps
+Sitemap: https://rekadish.com/sitemap.xml

@@ -1,0 +1,12 @@
+var R=require("../chunks/ssr/[turbopack]_runtime.js")("server/pages/dessert.js")
+R.c("server/chunks/ssr/node_modules_next_dist_esm_build_templates_pages_01f3ab57.js")
+R.c("server/chunks/ssr/[root-of-the-server]__33abe4b8._.js")
+R.c("server/chunks/ssr/components_0896a42c._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__b88bb96a._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__01c688a5._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__e0ead3b6._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__908eb9df._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__c88c4162._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__74d6dbeb._.js")
+R.m(76827)
+module.exports=R.m(76827).exports
