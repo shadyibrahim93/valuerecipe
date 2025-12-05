@@ -2,11 +2,11 @@
 import { getServerSupabase } from '../../../lib/supabaseClient.js';
 
 export default async function handler(req, res) {
-  const supa = getServerSupabase();
+  const supabase = getServerSupabase();
   const { id } = req.query;
 
   if (req.method === 'GET') {
-    const { data, error } = await supa
+    const { data, error } = await supabase
       .from('recipes')
       .select('*')
       .or(`id.eq.${id},slug.eq.${id}`)
@@ -17,14 +17,12 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
-    // protect - only service role allowed
-    const { error } = await supa.from('recipes').delete().eq('id', id);
+    const { error } = await supabase.from('recipes').delete().eq('id', id);
     if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json({ success: true });
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
-    // 🔒 Only allow updates from localhost in non-production
     const host = req.headers.host || '';
     const isLocalhost = host.startsWith('localhost');
 
@@ -37,11 +35,10 @@ export default async function handler(req, res) {
     try {
       const payload = req.body || {};
 
-      // Never let the client change these directly
       delete payload.id;
       delete payload.created_at;
 
-      const { data, error } = await supa
+      const { data, error } = await supabase
         .from('recipes')
         .update(payload)
         .eq('id', id)

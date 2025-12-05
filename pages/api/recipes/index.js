@@ -2,11 +2,10 @@
 import { getServerSupabase } from '../../../lib/supabaseClient.js';
 
 export default async function handler(req, res) {
-  const service = getServerSupabase();
+  const supabase = getServerSupabase();
 
   if (req.method === 'GET') {
     try {
-      // query params come in as strings
       const {
         page = '1',
         per_page = '12',
@@ -20,27 +19,23 @@ export default async function handler(req, res) {
       const pageNum = Number(page) || 1;
       const perPageNum = Number(per_page) || 12;
 
-      let query = service.from('recipes').select('*', { count: 'exact' });
+      let query = supabase.from('recipes').select('*', { count: 'exact' });
 
-      /* ----------------------------------------
-         CUISINE FILTER
-      ---------------------------------------- */
+      // CUISINE
       if (cuisine && cuisine !== 'trending') {
         query = query.ilike('cuisine', `%${cuisine}%`);
       }
 
-      /* ----------------------------------------
-         INGREDIENT SIMILARITY FILTER (JSONB)
-      ---------------------------------------- */
-      if (req.query.ingredients) {
-        const list = req.query.ingredients
+      // INGREDIENTS (JSONB)
+      if (ingredients) {
+        const list = ingredients
           .split(',')
           .map((str) => str.trim())
           .filter(Boolean);
 
         if (list.length > 0) {
-          // MODE A: "ANY" (OR Logic) - Used for Similar Recipes
           if (match_type === 'any') {
+            // OR mode
             const orConditions = list
               .map(
                 (slug) => `ingredients.cs.${JSON.stringify([{ image: slug }])}`
@@ -48,9 +43,8 @@ export default async function handler(req, res) {
               .join(',');
 
             query = query.or(orConditions);
-          }
-          // MODE B: "ALL" (AND Logic) - Default for Search/FilterPanel
-          else {
+          } else {
+            // ALL mode
             for (const slug of list) {
               const jsonFilter = JSON.stringify([{ image: slug }]);
               query = query.filter('ingredients', 'cs', jsonFilter);
@@ -59,17 +53,13 @@ export default async function handler(req, res) {
         }
       }
 
-      /* ----------------------------------------
-         DIFFICULTY
-      ---------------------------------------- */
+      // DIFFICULTY
       if (difficulty) {
         const list = difficulty.split(',').map((d) => d.trim());
         query = query.in('difficulty', list);
       }
 
-      /* ----------------------------------------
-         MAX COOK TIME
-      ---------------------------------------- */
+      // MAX TIME
       if (max_time) {
         const maxTimeNum = Number(max_time);
         if (!Number.isNaN(maxTimeNum)) {
@@ -77,17 +67,12 @@ export default async function handler(req, res) {
         }
       }
 
-      /* ----------------------------------------
-        SERVING TIME FILTER
-        ?serving_time=breakfast|lunch|dinner
-      ---------------------------------------- */
+      // SERVING TIME (breakfast / lunch / dinner, etc.)
       if (req.query.serving_time) {
         query = query.eq('serving_time', req.query.serving_time);
       }
 
-      /* ----------------------------------------
-         PAGINATION
-      ---------------------------------------- */
+      // PAGINATION
       const offset = (pageNum - 1) * perPageNum;
       query = query.range(offset, offset + perPageNum - 1);
 
@@ -107,9 +92,6 @@ export default async function handler(req, res) {
     }
   }
 
-  /* ----------------------------------------
-     POST
-  ---------------------------------------- */
   if (req.method === 'POST') {
     const key = req.headers['x-api-key'];
     if (key !== process.env.RECIPE_API_KEY) {
@@ -118,7 +100,7 @@ export default async function handler(req, res) {
 
     try {
       const payload = req.body;
-      const { data, error } = await service
+      const { data, error } = await supabase
         .from('recipes')
         .insert([payload])
         .select();
