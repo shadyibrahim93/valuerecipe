@@ -37,9 +37,9 @@ export default function MyApp({ Component, pageProps }) {
         strategy='afterInteractive'
       />
 
-      {/* --- 3. Ezoic Integration --- */}
+      {/* --- 3. Ezoic Integration (Updated for Safety) --- */}
       <Script
-        src='//www.ezojs.com/ezoic/sa.min.js'
+        src='https://www.ezojs.com/ezoic/sa.min.js'
         strategy='afterInteractive'
       />
       <Script
@@ -48,11 +48,11 @@ export default function MyApp({ Component, pageProps }) {
       >
         {`
           window.ezstandalone = window.ezstandalone || {};
-          ezstandalone.cmd = ezstandalone.cmd || [];
+          window.ezstandalone.cmd = window.ezstandalone.cmd || [];
         `}
       </Script>
 
-      {/* --- 4. Google Analytics (From previous step) --- */}
+      {/* --- 4. Google Analytics --- */}
       <Script
         src='https://www.googletagmanager.com/gtag/js?id=G-3T82SZMP1T'
         strategy='afterInteractive'

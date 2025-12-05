@@ -10,6 +10,9 @@ const nextConfig = {
   },
 
   images: {
+    // Cloudflare does not support the default Next.js Image Optimization API.
+    // We set unoptimized: true to serve images as-is (saving bandwidth & processing).
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -34,5 +37,5 @@ const nextConfig = {
   }
 };
 
-// 🔥 MUST USE COMMONJS EXPORT FOR FIREBASE SSR
+// 🔥 MUST USE COMMONJS EXPORT FOR FIREBASE SSR (AND OPENNEXT)
 module.exports = nextConfig;
