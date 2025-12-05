@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { timeAgo } from '../../utils/timeAgo';
+import { BRAND_NAME } from '../../lib/constants.js';
 
 const EMOJIS = [
   { id: 'heart', icon: '❤️' },
