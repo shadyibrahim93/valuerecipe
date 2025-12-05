@@ -1,3 +1,0 @@
-module.exports=[8148,a=>{"use strict";var b=a.i(8171);function c({children:a,onClose:c}){return(0,b.jsx)("div",{className:"vr-modal__backdrop",onClick:c,children:(0,b.jsxs)("div",{className:"vr-modal__content",onClick:a=>a.stopPropagation(),children:[(0,b.jsx)("button",{className:"vr-modal__close",onClick:c,"aria-label":"Close modal",children:"×"}),a]})})}a.s(["default",()=>c])},51977,a=>{a.n(a.i(8148))}];
-
-//# sourceMappingURL=components_VRModal_11f7086a.js.map
