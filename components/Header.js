@@ -39,7 +39,7 @@ export default function Header() {
             <div className='vr-header__brand'>
               <div className='vr-header__logo'>
                 <img
-                  src='/images/logo/brand_icon_small_3.png'
+                  src='/images/logo/brand_logo.webp'
                   alt='Value Recipe Logo'
                 />
               </div>
@@ -96,7 +96,7 @@ export default function Header() {
               >
                 <img
                   className='vr-menu__img'
-                  src='/images/menu/recipes.png'
+                  src='/images/menu/recipes.webp'
                   alt='Recipes'
                 />
                 Recipes
@@ -108,7 +108,7 @@ export default function Header() {
               >
                 <img
                   className='vr-menu__img'
-                  src='/images/menu/cuisine.png'
+                  src='/images/menu/cuisine.webp'
                   alt='Cuisine'
                 />
                 Cuisine
@@ -120,7 +120,7 @@ export default function Header() {
               >
                 <img
                   className='vr-menu__img'
-                  src='/images/menu/breakfast.png'
+                  src='/images/menu/breakfast.webp'
                   alt='Breakfast'
                 />
                 Breakfast
@@ -132,7 +132,7 @@ export default function Header() {
               >
                 <img
                   className='vr-menu__img'
-                  src='/images/menu/lunch.png'
+                  src='/images/menu/lunch.webp'
                   alt='Lunch'
                 />
                 Lunch
@@ -144,7 +144,7 @@ export default function Header() {
               >
                 <img
                   className='vr-menu__img'
-                  src='/images/menu/dinner.png'
+                  src='/images/menu/dinner.webp'
                   alt='Dinner'
                 />
                 Dinner
@@ -156,7 +156,7 @@ export default function Header() {
               >
                 <img
                   className='vr-menu__img'
-                  src='/images/menu/dessert.png'
+                  src='/images/menu/dessert.webp'
                   alt='Desserts'
                 />
                 Desserts

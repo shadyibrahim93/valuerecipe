@@ -3,7 +3,7 @@ import { BRAND_NAME } from '../lib/constants';
 
 export default function TermsPage() {
   return (
-    <div className='vr-legal-page'>
+    <div className='vr-legal-page vr-card'>
       <div className='vr-legal-container'>
         <h1>Terms of Service</h1>
         <p>
@@ -13,7 +13,7 @@ export default function TermsPage() {
         <h2>1. About {BRAND_NAME}</h2>
         <p>
           {BRAND_NAME} (“we,” “our,” “us”) operates as an online recipe and
-          food-content platform under the name “ValueRecipe,” without a formal
+          food-content platform under the name “{BRAND_NAME},” without a formal
           company entity. These Terms of Service are governed by the laws of New
           Jersey, USA.
         </p>
@@ -84,7 +84,7 @@ export default function TermsPage() {
           reviewing compatibility with dietary restrictions, and ensuring
           personal safety when cooking.
         </p>
-        <p>ValueRecipe is not liable for:</p>
+        <p>{BRAND_NAME} is not liable for:</p>
         <ul>
           <li>Food allergies or reactions</li>
           <li>Cooking accidents, injuries, or illness</li>
@@ -123,7 +123,7 @@ export default function TermsPage() {
         </p>
 
         <h2>10. Third-Party Services</h2>
-        <p>ValueRecipe uses third-party tools and services including:</p>
+        <p>{BRAND_NAME} uses third-party tools and services including:</p>
         <ul>
           <li>Supabase (database & authentication)</li>
           <li>Google Ads</li>
@@ -160,7 +160,7 @@ export default function TermsPage() {
         <p>
           For questions regarding these Terms, please contact us at:
           <br />
-          <strong>[support@valuerecipe.com]</strong>
+          <strong>[support@rekadish.com]</strong>
         </p>
       </div>
     </div>

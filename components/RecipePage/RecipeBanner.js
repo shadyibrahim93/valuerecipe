@@ -6,7 +6,7 @@ export default function RecipeBanner({ recipe, onStartCooking, onShare }) {
     <div className='vr-hero'>
       <Image
         className='vr-hero__image'
-        src={`/images/recipes/${recipe.image_url}.jpg`}
+        src={`/images/recipes/${recipe.image_url}.webp`}
         alt={recipe.title}
         width={1920}
         height={600}

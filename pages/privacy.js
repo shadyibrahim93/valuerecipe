@@ -3,11 +3,11 @@ import { BRAND_NAME } from '../lib/constants';
 
 export default function PrivacyPage() {
   return (
-    <div className='vr-legal-page'>
+    <div className='vr-legal-page vr-card'>
       <div className='vr-legal-container'>
-        <h1>Privacy Policy</h1>
+        <h1 className='vr-category__title'>Privacy Policy</h1>
         <p>
-          <em>Last Updated: December 01, 2025</em>
+          <em>Last Updated: December 05, 2025</em>
         </p>
 
         <h2>1. Introduction</h2>
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         </ul>
 
         <h3>C. Cookies</h3>
-        <p>ValueRecipe uses:</p>
+        <p>{BRAND_NAME} uses:</p>
         <ul>
           <li>
             <strong>Google Analytics cookies</strong> for traffic insights
@@ -52,6 +52,10 @@ export default function PrivacyPage() {
           <li>
             <strong>Google Ads cookies</strong> for ad personalization and
             measurement
+          </li>
+          <li>
+            <strong>Ezoic cookies</strong> for ad delivery, reporting, and
+            analytics
           </li>
           <li>
             <strong>Functional cookies</strong> for saving preferences, ratings,
@@ -81,20 +85,46 @@ export default function PrivacyPage() {
           <li>Supabase (database & authentication)</li>
           <li>Google Ads</li>
           <li>Google Analytics</li>
+          <li>
+            <strong>Ezoic Inc.</strong> (Advertising Partner)
+          </li>
           <li>Website hosting providers (when selected)</li>
         </ul>
         <p>
           We do <strong>not</strong> sell personal information to third parties.
         </p>
 
-        <h2>5. Affiliate Links & Sponsored Content</h2>
+        <h2>5. Advertising Privacy Statement (Ezoic)</h2>
+        <p>
+          This website uses Ezoic to manage third-party interest-based
+          advertising. Ezoic may use cookies, web beacons, and other
+          technologies to collect information about your activities on this
+          website and other websites to provide you with targeted advertising
+          based on your interests.
+        </p>
+        <p>
+          You can view the full details of Ezoic's privacy policy and valid
+          advertising partners here:
+          <a
+            href='http://g.ezoic.net/privacy/rekadish.com'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            http://g.ezoic.net/privacy/rekadish.com
+          </a>
+        </p>
+
+        {/* 👇 REQUIRED BY EZOIC: This span is where they inject the full policy text automatically */}
+        <span id='ezoic-privacy-policy-embed'></span>
+
+        <h2>6. Affiliate Links & Sponsored Content</h2>
         <p>
           {BRAND_NAME} may include affiliate links or sponsored posts. When
           users click affiliate links, we may earn a commission at no extra cost
           to the user. All sponsored content will be clearly disclosed.
         </p>
 
-        <h2>6. User Rights</h2>
+        <h2>7. User Rights</h2>
         <p>Depending on your location, you may have the right to:</p>
         <ul>
           <li>Access the personal data we store about you</li>
@@ -104,14 +134,14 @@ export default function PrivacyPage() {
           <li>Disable cookies</li>
         </ul>
 
-        <h2>7. Data Security</h2>
+        <h2>8. Data Security</h2>
         <p>
           We use reasonable security measures to protect personal information,
           but no system is completely secure. Users submit information at their
           own risk.
         </p>
 
-        <h2>8. Children’s Privacy</h2>
+        <h2>9. Children’s Privacy</h2>
         <p>
           {BRAND_NAME} is accessible to all ages. We do not knowingly collect
           personal information from children under 13 without parental consent.
@@ -119,31 +149,31 @@ export default function PrivacyPage() {
           us for removal.
         </p>
 
-        <h2>9. International Users</h2>
+        <h2>10. International Users</h2>
         <p>
           {BRAND_NAME} operates in New Jersey, USA. By using the site,
           international users consent to transferring their data to the United
           States.
         </p>
 
-        <h2>10. Data Retention</h2>
+        <h2>11. Data Retention</h2>
         <p>
           We retain information only as long as necessary for business,
           operational, or legal reasons. Users may request deletion of their
           data.
         </p>
 
-        <h2>11. Changes to This Privacy Policy</h2>
+        <h2>12. Changes to This Privacy Policy</h2>
         <p>
           We may update this Privacy Policy periodically. Continued use of
           {BRAND_NAME} after updates indicates acceptance of the revised policy.
         </p>
 
-        <h2>12. Contact Us</h2>
+        <h2>13. Contact Us</h2>
         <p>
           For privacy-related questions, contact us at:
           <br />
-          <strong>[privacy@valuerecipe.com]</strong>
+          <strong>[support@rekadish.com]</strong>
         </p>
       </div>
     </div>

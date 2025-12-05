@@ -2,21 +2,26 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { supabase } from '../lib/supabaseClient'; // Make sure to import supabase
+import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
-import AdSlot from '../components/AdSlot';
-import MealPlanner from '../components/MealPlanner';
 import { useModal } from '../components/ModalContext';
-import { BRAND_NAME, BRAND_URL } from '../lib/constants'; // BRAND_URL ADDED
+import { BRAND_NAME, BRAND_URL } from '../lib/constants';
+import SideBar from '../components/SideBar.js';
+import AdSlot from '../components/AdSlot';
 
 // 👇 1. THIS RUNS ON THE SERVER (ISR)
 export async function getStaticProps() {
   const PROPS_REVALIDATE = 60; // Update homepage at most once every 60 seconds
 
+  // Define the lightweight columns we need for cards
+  // Excludes heavy fields like 'instructions', 'ingredients', 'nutrition_info'
+  const cardColumns =
+    'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine';
+
   // --- A. Fetch Top Rated (Efficiently via DB sort) ---
   const { data: topRated } = await supabase
     .from('recipes')
-    .select('*')
+    .select(cardColumns) // 👈 OPTIMIZED
     .order('rating', { ascending: false })
     .order('rating_count', { ascending: false })
     .limit(11);
@@ -25,8 +30,8 @@ export async function getStaticProps() {
   // We fetch a larger batch to find what tags/cuisines exist
   const { data: batchRecipes } = await supabase
     .from('recipes')
-    .select('*')
-    .limit(300); // 300 is enough to get a good spread of categories
+    .select(cardColumns) // 👈 OPTIMIZED
+    .limit(300);
 
   const all = batchRecipes || [];
 
@@ -52,7 +57,7 @@ export async function getStaticProps() {
     uniqueCuisines.map(async (cuisine) => {
       const { data } = await supabase
         .from('recipes')
-        .select('*')
+        .select(cardColumns) // 👈 OPTIMIZED
         .eq('cuisine', cuisine)
         .limit(11);
 
@@ -94,11 +99,11 @@ export default function Home({
   const siteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'ValueRecipe',
-    url: BRAND_URL, // Updated
+    name: BRAND_NAME,
+    url: BRAND_URL,
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${BRAND_URL}/search?q={search_term_string}`, // Updated
+      target: `${BRAND_URL}/search?q={search_term_string}`,
       'query-input': 'required name=search_term_string'
     }
   };
@@ -106,39 +111,36 @@ export default function Home({
   const orgSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'ValueRecipe',
-    url: BRAND_URL, // Updated
+    name: BRAND_NAME,
+    url: BRAND_URL,
     logo: {
       '@type': 'ImageObject',
-      url: `${BRAND_URL}/logo.png` // Updated
+      url: `${BRAND_URL}/logo.webp`
     },
     sameAs: [
-      'https://www.facebook.com/ValueRecipe',
-      'https://www.instagram.com/ValueRecipe',
-      'https://www.pinterest.com/ValueRecipe'
+      `https://www.facebook.com/${BRAND_URL}`,
+      `https://www.instagram.com/${BRAND_URL}`,
+      `https://www.pinterest.com/${BRAND_URL}`
     ]
   };
 
   const homeSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'ValueRecipe — Discover delightful recipes',
+    name: `${BRAND_NAME} — Discover delightful recipes`,
     description:
       'Discover curated, fast, and fun recipes by cuisine, category, and difficulty.',
-    url: BRAND_URL, // Updated
+    url: BRAND_URL,
     hasPart: [
       {
         '@type': 'Collection',
         name: 'Top Rated Recipes',
-        url: `${BRAND_URL}/recipes?sort=top-rated` // Updated
+        url: `${BRAND_URL}/recipes?sort=top-rated`
       },
       ...cuisines.map((cuisineName) => ({
         '@type': 'Collection',
         name: `${cuisineName} Recipes`,
-        url: `${BRAND_URL}/categories/${encodeURIComponent(
-          // Updated
-          cuisineName
-        )}`
+        url: `${BRAND_URL}/categories/${encodeURIComponent(cuisineName)}`
       }))
     ]
   };
@@ -147,7 +149,7 @@ export default function Home({
     <>
       <Head>
         {/* BASIC SEO */}
-        <title>ValueRecipe — Discover delightful recipes</title>
+        <title>{BRAND_NAME} — Discover delightful recipes</title>
         <meta
           name='description'
           content={`Discover curated, fast, and fun recipes by cuisine and category. Plan meals, cook from your pantry, and explore top-rated dishes on ${BRAND_NAME}.`}
@@ -158,23 +160,23 @@ export default function Home({
         />
         <meta
           name='author'
-          content='ValueRecipe Editorial Team'
+          content={`${BRAND_NAME} Editorial Team`}
         />
         <meta
           name='publisher'
-          content='ValueRecipe'
+          content={`${BRAND_NAME}`}
         />
 
         {/* CANONICAL */}
         <link
           rel='canonical'
-          href={BRAND_URL} // Updated
+          href={BRAND_URL}
         />
 
         {/* OPEN GRAPH */}
         <meta
           property='og:title'
-          content='ValueRecipe — Discover delightful recipes'
+          content={`${BRAND_NAME} — Discover delightful recipes`}
         />
         <meta
           property='og:description'
@@ -182,11 +184,11 @@ export default function Home({
         />
         <meta
           property='og:image'
-          content={`${BRAND_URL}/images/og-home.jpg`} // Updated
+          content={`${BRAND_URL}/images/og-home.webp`}
         />
         <meta
           property='og:url'
-          content={BRAND_URL} // Updated
+          content={BRAND_URL}
         />
         <meta
           property='og:type'
@@ -194,7 +196,7 @@ export default function Home({
         />
         <meta
           property='og:site_name'
-          content='ValueRecipe'
+          content={`${BRAND_NAME}`}
         />
 
         {/* TWITTER */}
@@ -204,7 +206,7 @@ export default function Home({
         />
         <meta
           name='twitter:title'
-          content='ValueRecipe — Discover delightful recipes'
+          content={`${BRAND_NAME} — Discover delightful recipes`}
         />
         <meta
           name='twitter:description'
@@ -212,7 +214,7 @@ export default function Home({
         />
         <meta
           name='twitter:image'
-          content={`${BRAND_URL}/images/og-home.jpg`} // Updated
+          content={`${BRAND_URL}/images/og-home.webp`}
         />
 
         {/* STRUCTURED DATA */}
@@ -234,7 +236,7 @@ export default function Home({
       <section className='vr-hero'>
         <img
           className='vr-hero__image'
-          src='/images/hero-banner2.jpg'
+          src='/images/hero-banner2.webp'
           alt='Assorted plated dishes from different cuisines'
         />
         <div className='vr-hero__overlay'>
@@ -407,13 +409,7 @@ export default function Home({
         </div>
 
         {/* SIDEBAR */}
-        <aside
-          className='vr-sidebar'
-          id='planner'
-        >
-          <MealPlanner />
-          <AdSlot position='home-sidebar' />
-        </aside>
+        <SideBar />
       </div>
     </>
   );

@@ -353,7 +353,7 @@ export default function RecipePage({ recipe }) {
           <AdSlot
             id='102'
             className='vr-card'
-            position='home-sidebar'
+            position='sidebar'
             placement='sticky'
             height='auto'
           />

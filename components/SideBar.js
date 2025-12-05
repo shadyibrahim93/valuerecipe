@@ -7,7 +7,7 @@ const SideBar = () => {
       <MealPlanner />
       <AdSlot
         id='101'
-        position='home-sidebar'
+        position='sidebar'
         placement='sticky'
         height='auto'
       />

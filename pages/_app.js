@@ -1,5 +1,6 @@
 import '../styles/main.scss';
 import Head from 'next/head';
+import Script from 'next/script'; // Import Script
 import Layout from '../components/Layout';
 import { MealPlannerProvider } from '../components/MealPlannerContext';
 import { UserProvider } from '../components/UserContext';
@@ -16,6 +17,59 @@ export default function MyApp({ Component, pageProps }) {
         />
       </Head>
 
+      {/* --- 1. Privacy & Consent (Loads First) --- */}
+      {/* "beforeInteractive" injects into head and loads before hydration */}
+      <Script
+        src='https://cmp.gatekeeperconsent.com/min.js'
+        data-cfasync='false'
+        strategy='beforeInteractive'
+      />
+      <Script
+        src='https://the.gatekeeperconsent.com/cmp.min.js'
+        data-cfasync='false'
+        strategy='beforeInteractive'
+      />
+
+      {/* --- 2. Google AdSense --- */}
+      <Script
+        src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4846660348676156'
+        crossOrigin='anonymous'
+        strategy='afterInteractive'
+      />
+
+      {/* --- 3. Ezoic Integration --- */}
+      <Script
+        src='//www.ezojs.com/ezoic/sa.min.js'
+        strategy='afterInteractive'
+      />
+      <Script
+        id='ezoic-init'
+        strategy='afterInteractive'
+      >
+        {`
+          window.ezstandalone = window.ezstandalone || {};
+          ezstandalone.cmd = ezstandalone.cmd || [];
+        `}
+      </Script>
+
+      {/* --- 4. Google Analytics (From previous step) --- */}
+      <Script
+        src='https://www.googletagmanager.com/gtag/js?id=G-3T82SZMP1T'
+        strategy='afterInteractive'
+      />
+      <Script
+        id='google-analytics'
+        strategy='afterInteractive'
+      >
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-3T82SZMP1T');
+        `}
+      </Script>
+
+      {/* --- App Content --- */}
       <MealPlannerProvider>
         <UserProvider>
           <ModalProvider>

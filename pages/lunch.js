@@ -2,16 +2,16 @@ import Head from 'next/head';
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
-import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
-import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants';
+import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants'; // 👈 Merged imports
 import SideBar from '../components/SideBar';
+import AdSlot from '../components/AdSlot';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'lunch';
-const PAGE_TITLE = 'Quick & Healthy Lunch Recipes for Home or Work';
-const HERO_IMAGE = '/images/categories/lunch-category.jpg';
+const PAGE_TITLE = 'Best Lunch Recipes & Easy Morning Ideas';
+const HERO_IMAGE = '/images/categories/lunch-category.webp';
 
 // ----------------------------------------
 // 1. SERVER SIDE BUILD (ISR)
@@ -20,8 +20,12 @@ export async function getStaticProps() {
   // --- A. Query Logic ---
   const query = supabase
     .from('recipes')
-    .select('*', { count: 'exact' })
-    .ilike('serving_time', SERVING_TIME); // Case-insensitive match for 'lunch'
+    // 👇 OPTIMIZED: Select ONLY columns needed for the Card to reduce page size
+    .select(
+      'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine',
+      { count: 'exact' }
+    )
+    .ilike('serving_time', SERVING_TIME);
 
   // --- B. Fetch First Page (Limit 24) ---
   const {
@@ -36,7 +40,6 @@ export async function getStaticProps() {
   }
 
   // --- C. Fetch Max Time (for initial filter state) ---
-  // Lightweight query just to get time columns to set the slider range
   const { data: timeData } = await supabase
     .from('recipes')
     .select('total_time, cook_time')
@@ -53,7 +56,6 @@ export async function getStaticProps() {
       initialTotalCount: count || 0,
       initialMaxTime
     },
-    // 👇 Update this page in the background at most once every 60 seconds
     revalidate: REVALIDATE_TIME
   };
 }
@@ -71,7 +73,6 @@ export default function LunchPage({
   const [totalCount, setTotalCount] = useState(initialTotalCount);
 
   // "All Recipes" is used by the FilterPanel to calculate counts/stats.
-  // We load this lazily so it doesn't block the initial render.
   const [allRecipes, setAllRecipes] = useState([]);
 
   const [filters, setFilters] = useState({
@@ -107,7 +108,6 @@ export default function LunchPage({
         const base = json.data || [];
         setAllRecipes(base);
 
-        // If the full dataset has a larger max time, update the slider
         const maxT = Math.max(
           ...base.map((r) => r.total_time || r.cook_time || 0)
         );
@@ -119,7 +119,6 @@ export default function LunchPage({
       }
     }
 
-    // Small delay to let the UI paint first
     const timer = setTimeout(loadFilterData, 500);
     return () => clearTimeout(timer);
   }, []);
@@ -161,7 +160,6 @@ export default function LunchPage({
 
       setRecipes((prev) => (replace ? data : [...prev, ...data]));
 
-      // Determine if there are more results
       const currentCount = replace ? data.length : recipes.length + data.length;
       const serverTotal = json.total_count || json.count || 0;
 
@@ -187,7 +185,6 @@ export default function LunchPage({
   // ----------------------------------------
   const isFirstRun = useRef(true);
   useEffect(() => {
-    // Skip the very first run because we already have InitialProps
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
@@ -196,8 +193,6 @@ export default function LunchPage({
     setRecipes([]);
     setPage(1);
     setHasMore(true);
-    // Optional: Scroll to top of list when filtering
-    // listRef.current?.scrollIntoView({ behavior: 'smooth' });
     fetchRecipesPage(1, true); // replace = true
   }, [filters]);
 
@@ -230,7 +225,7 @@ export default function LunchPage({
         </title>
         <meta
           name='description'
-          content='Browse our collection of quick and healthy lunch recipes. Perfect for work or home.'
+          content='Start your day right with our best lunch recipes. From quick eggs to fluffy pancakes.'
         />
       </Head>
 
@@ -243,7 +238,7 @@ export default function LunchPage({
           className='vr-category-hero__image'
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/images/hero-banner2.jpg';
+            e.target.src = '/images/hero-banner2.webp';
           }}
         />
         <div className='vr-category-hero__overlay'>

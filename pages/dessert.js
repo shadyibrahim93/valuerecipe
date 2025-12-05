@@ -2,16 +2,16 @@ import Head from 'next/head';
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
-import AdSlot from '../components/AdSlot';
+import AdSlot from '../components/AdSlot'; // 👈 Added AdSlot import
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
-import MealPlanner from '../components/MealPlanner';
 import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants';
+import SideBar from '../components/SideBar.js';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'dessert';
 const PAGE_TITLE = 'Easy Dessert Recipes & Best Baking Ideas';
-const HERO_IMAGE = '/images/categories/dessert-category.jpg';
+const HERO_IMAGE = '/images/categories/dessert-category.webp';
 
 // ----------------------------------------
 // 1. SERVER SIDE BUILD (ISR)
@@ -20,8 +20,12 @@ export async function getStaticProps() {
   // --- A. Query Logic ---
   const query = supabase
     .from('recipes')
-    .select('*', { count: 'exact' })
-    .ilike('serving_time', SERVING_TIME); // Case-insensitive match
+    // 👇 OPTIMIZED: Select ONLY columns needed for the Card.
+    .select(
+      'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine',
+      { count: 'exact' }
+    )
+    .ilike('serving_time', SERVING_TIME);
 
   // --- B. Fetch First Page (Limit 24) ---
   const {
@@ -36,7 +40,6 @@ export async function getStaticProps() {
   }
 
   // --- C. Fetch Max Time (for initial filter state) ---
-  // Lightweight query just to get time columns to set the slider range
   const { data: timeData } = await supabase
     .from('recipes')
     .select('total_time, cook_time')
@@ -53,7 +56,6 @@ export async function getStaticProps() {
       initialTotalCount: count || 0,
       initialMaxTime
     },
-    // 👇 Update this page in the background at most once every 60 seconds
     revalidate: REVALIDATE_TIME
   };
 }
@@ -71,7 +73,6 @@ export default function DessertPage({
   const [totalCount, setTotalCount] = useState(initialTotalCount);
 
   // "All Recipes" is used by the FilterPanel to calculate counts/stats.
-  // We load this lazily so it doesn't block the initial render.
   const [allRecipes, setAllRecipes] = useState([]);
 
   const [filters, setFilters] = useState({
@@ -107,7 +108,6 @@ export default function DessertPage({
         const base = json.data || [];
         setAllRecipes(base);
 
-        // If the full dataset has a larger max time, update the slider
         const maxT = Math.max(
           ...base.map((r) => r.total_time || r.cook_time || 0)
         );
@@ -119,7 +119,6 @@ export default function DessertPage({
       }
     }
 
-    // Small delay to let the UI paint first
     const timer = setTimeout(loadFilterData, 500);
     return () => clearTimeout(timer);
   }, []);
@@ -161,7 +160,6 @@ export default function DessertPage({
 
       setRecipes((prev) => (replace ? data : [...prev, ...data]));
 
-      // Determine if there are more results
       const currentCount = replace ? data.length : recipes.length + data.length;
       const serverTotal = json.total_count || json.count || 0;
 
@@ -241,7 +239,7 @@ export default function DessertPage({
           className='vr-category-hero__image'
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/images/hero-banner2.jpg';
+            e.target.src = '/images/hero-banner2.webp';
           }}
         />
         <div className='vr-category-hero__overlay'>
@@ -271,11 +269,24 @@ export default function DessertPage({
           </div>
 
           <div className='vr-category__grid'>
-            {recipes.map((r) => (
-              <RecipeCard
-                key={r.id}
-                recipe={r}
-              />
+            {recipes.map((r, index) => (
+              <>
+                <RecipeCard
+                  key={r.id}
+                  recipe={r}
+                />
+
+                {/* Insert Ad after every 6th recipe */}
+                {(index + 1) % 6 === 0 && (
+                  <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
+                    <AdSlot
+                      id='101'
+                      position='in-feed'
+                      height='100%'
+                    />
+                  </article>
+                )}
+              </>
             ))}
           </div>
 
@@ -298,11 +309,7 @@ export default function DessertPage({
             </div>
           )}
         </main>
-
-        <aside className='vr-sidebar'>
-          <MealPlanner />
-          <AdSlot position='header' />
-        </aside>
+        <SideBar />
       </div>
     </>
   );

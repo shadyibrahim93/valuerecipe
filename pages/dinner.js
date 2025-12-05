@@ -11,7 +11,7 @@ import SideBar from '../components/SideBar';
 const PER_PAGE = 24;
 const SERVING_TIME = 'dinner';
 const PAGE_TITLE = 'Easy Dinner Recipes & Weeknight Meal Ideas';
-const HERO_IMAGE = '/images/categories/dinner-category.jpg';
+const HERO_IMAGE = '/images/categories/dinner-category.webp';
 
 // ----------------------------------------
 // 1. SERVER SIDE BUILD (ISR)
@@ -20,8 +20,13 @@ export async function getStaticProps() {
   // --- A. Query Logic ---
   const query = supabase
     .from('recipes')
-    .select('*', { count: 'exact' })
-    .ilike('serving_time', SERVING_TIME); // Case-insensitive match
+    // 👇 FIX: Select ONLY columns needed for the Card.
+    // Excluded: instructions, ingredients, nutrition_info (the heavy stuff)
+    .select(
+      'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine',
+      { count: 'exact' }
+    )
+    .ilike('serving_time', SERVING_TIME);
 
   // --- B. Fetch First Page (Limit 24) ---
   const {
@@ -36,7 +41,6 @@ export async function getStaticProps() {
   }
 
   // --- C. Fetch Max Time (for initial filter state) ---
-  // Lightweight query just to get time columns to set the slider range
   const { data: timeData } = await supabase
     .from('recipes')
     .select('total_time, cook_time')
@@ -53,7 +57,6 @@ export async function getStaticProps() {
       initialTotalCount: count || 0,
       initialMaxTime
     },
-    // 👇 Update this page in the background at most once every 60 seconds
     revalidate: REVALIDATE_TIME
   };
 }
@@ -71,7 +74,6 @@ export default function DinnerPage({
   const [totalCount, setTotalCount] = useState(initialTotalCount);
 
   // "All Recipes" is used by the FilterPanel to calculate counts/stats.
-  // We load this lazily so it doesn't block the initial render.
   const [allRecipes, setAllRecipes] = useState([]);
 
   const [filters, setFilters] = useState({
@@ -107,7 +109,6 @@ export default function DinnerPage({
         const base = json.data || [];
         setAllRecipes(base);
 
-        // If the full dataset has a larger max time, update the slider
         const maxT = Math.max(
           ...base.map((r) => r.total_time || r.cook_time || 0)
         );
@@ -119,7 +120,6 @@ export default function DinnerPage({
       }
     }
 
-    // Small delay to let the UI paint first
     const timer = setTimeout(loadFilterData, 500);
     return () => clearTimeout(timer);
   }, []);
@@ -161,7 +161,6 @@ export default function DinnerPage({
 
       setRecipes((prev) => (replace ? data : [...prev, ...data]));
 
-      // Determine if there are more results
       const currentCount = replace ? data.length : recipes.length + data.length;
       const serverTotal = json.total_count || json.count || 0;
 
@@ -187,7 +186,6 @@ export default function DinnerPage({
   // ----------------------------------------
   const isFirstRun = useRef(true);
   useEffect(() => {
-    // Skip the very first run because we already have InitialProps
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
@@ -241,7 +239,7 @@ export default function DinnerPage({
           className='vr-category-hero__image'
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/images/hero-banner2.jpg';
+            e.target.src = '/images/hero-banner2.webp';
           }}
         />
         <div className='vr-category-hero__overlay'>
@@ -251,7 +249,7 @@ export default function DinnerPage({
 
       <div className='vr-category-layout'>
         <FilterPanel
-          allRecipes={allRecipes} // Populates lazily
+          allRecipes={allRecipes}
           difficultyOptions={['easy', 'medium', 'hard']}
           initialTimeRange={{ min: 0, max: 60 }}
           onFilterChange={setFilters}
@@ -278,10 +276,8 @@ export default function DinnerPage({
                   recipe={r}
                 />
 
-                {/* Insert Ad after every 6th recipe */}
                 {(index + 1) % 6 === 0 && (
                   <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
-                    {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
                     <AdSlot
                       id='101'
                       position='in-feed'

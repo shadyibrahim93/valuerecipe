@@ -1,69 +1,71 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
+import { supabase } from '../lib/supabaseClient'; // Import Supabase directly
 import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb.js';
 import { useModal } from '../components/ModalContext';
-import { BRAND_NAME, BRAND_URL } from '../lib/constants'; // BRAND_URL ADDED
+import { BRAND_NAME, BRAND_URL, REVALIDATE_TIME } from '../lib/constants';
 import SideBar from '../components/SideBar';
 
-export default function Home() {
-  const [recipes, setRecipes] = useState([]);
-  const [cuisines, setCuisines] = useState([]);
-  const [cuisineRecipes, setCuisineRecipes] = useState({});
+// ----------------------------------------
+// 1. SERVER SIDE BUILD (ISR)
+// ----------------------------------------
+export async function getStaticProps() {
+  // 👇 THE SAFE COLUMN LIST (Prevents crash, saves bandwidth)
+  const safeColumns =
+    'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine';
+
+  // A. Fetch a large batch to find all unique cuisines
+  // We limit to 500 to get a good representation of active categories
+  const { data: allData } = await supabase
+    .from('recipes')
+    .select('cuisine')
+    .not('cuisine', 'is', null)
+    .limit(500);
+
+  // B. Extract Unique Cuisines
+  const uniqueCuisines = [
+    ...new Set((allData || []).map((r) => r.cuisine?.trim()).filter(Boolean))
+  ].sort();
+
+  // C. Fetch Recipes for EACH Cuisine (in parallel)
+  const cuisineRecipes = {};
+
+  await Promise.all(
+    uniqueCuisines.map(async (cuisine) => {
+      const { data } = await supabase
+        .from('recipes')
+        .select(safeColumns) // 👈 Optimization happens here
+        .eq('cuisine', cuisine)
+        .limit(8); // Limit 8 per row for cleaner layout (or 12)
+
+      if (data && data.length > 0) {
+        cuisineRecipes[cuisine] = data;
+      }
+    })
+  );
+
+  // Filter out cuisines that ended up having 0 recipes
+  const activeCuisines = uniqueCuisines.filter(
+    (c) => cuisineRecipes[c] && cuisineRecipes[c].length > 0
+  );
+
+  return {
+    props: {
+      cuisines: activeCuisines,
+      cuisineRecipes
+    },
+    revalidate: REVALIDATE_TIME // Update every 60s
+  };
+}
+
+// ----------------------------------------
+// 2. COMPONENT (Instant Render)
+// ----------------------------------------
+export default function Categories({ cuisines = [], cuisineRecipes = {} }) {
   const { setShowIngredientsModal } = useModal();
-
-  /* ----------------------------------------
-      Load Trending Recipes (First 8)
-  ---------------------------------------- */
-  const loadTrending = async () => {
-    const res = await fetch(`/api/recipes?page=1&per_page=11`);
-    const json = await res.json();
-    setRecipes(json.data || []);
-  };
-
-  /* ----------------------------------------
-      Load ALL cuisines
-  ---------------------------------------- */
-  const loadCuisines = async () => {
-    const res = await fetch(`/api/recipes?page=1&per_page=500`);
-    const json = await res.json();
-
-    const unique = [
-      ...new Set(
-        (json.data || []).map((r) => r.cuisine?.trim()).filter(Boolean)
-      )
-    ];
-
-    setCuisines(unique);
-  };
-
-  useEffect(() => {
-    loadTrending();
-    loadCuisines();
-  }, []);
-
-  /* ----------------------------------------
-      Load Cuisine Recipes
-  ---------------------------------------- */
-  const loadCuisineRecipes = async (cuisineName) => {
-    const res = await fetch(
-      `/api/recipes?cuisine=${encodeURIComponent(
-        cuisineName
-      )}&page=1&per_page=11`
-    );
-    const json = await res.json();
-
-    setCuisineRecipes((prev) => ({
-      ...prev,
-      [cuisineName]: json.data || []
-    }));
-  };
-
-  useEffect(() => {
-    cuisines.forEach((c) => loadCuisineRecipes(c));
-  }, [cuisines]);
 
   /* ----------------------------------------
       SEO: keywords
@@ -76,83 +78,70 @@ export default function Home() {
   /* ----------------------------------------
       JSON-LD SCHEMA
   ---------------------------------------- */
-
-  // ⭐ Site Schema (Organization + Website)
+  // ⭐ Site Schema
   const siteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: BRAND_NAME, // Updated
-    url: BRAND_URL, // Updated
+    name: BRAND_NAME,
+    url: BRAND_URL,
     sameAs: [
-      `https://facebook.com/${BRAND_NAME}`, // Updated
-      `https://www.pinterest.com/${BRAND_NAME}`, // Updated
-      `https://www.instagram.com/${BRAND_NAME}` // Updated
+      `https://facebook.com/${BRAND_NAME}`,
+      `https://www.pinterest.com/${BRAND_NAME}`,
+      `https://www.instagram.com/${BRAND_NAME}`
     ],
     publisher: {
       '@type': 'Organization',
-      name: BRAND_NAME, // Updated
+      name: BRAND_NAME,
       logo: {
         '@type': 'ImageObject',
-        url: `${BRAND_URL}/logo.png` // Updated
+        url: `${BRAND_URL}/logo.webp`
       }
     }
   };
 
-  // ⭐ Home Page Collection Schema
-  const homeSchema = {
+  // ⭐ Collection Schema
+  const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `${BRAND_NAME} — Discover delightful recipes`, // Updated
-    description:
-      'Explore curated, fast, and fun recipes from all cuisines. Meal ideas for breakfast, lunch, dinner, and more.',
-    url: BRAND_URL, // Updated
+    name: `${BRAND_NAME} — Discover delightful recipes`,
+    description: 'Explore curated, fast, and fun recipes from all cuisines.',
+    url: BRAND_URL,
     hasPart: cuisines.map((cuisineName) => ({
       '@type': 'Collection',
       name: `${cuisineName} Recipes`,
-      url: `${BRAND_URL}/categories/${encodeURIComponent(
-        // Updated URL structure
-        cuisineName
-      )}`
+      url: `${BRAND_URL}/categories/${encodeURIComponent(cuisineName)}`
     }))
   };
 
-  /* ----------------------------------------
-      RENDER
-  ---------------------------------------- */
   return (
     <>
       <Head>
-        {/* TITLE */}
-        <title>{BRAND_NAME} — Discover delightful recipes</title>{' '}
-        {/* Updated */}
-        {/* DESCRIPTION */}
+        <title>{BRAND_NAME} — Discover delightful recipes</title>
         <meta
           name='description'
           content='Discover premium-quality recipes, curated by cuisine and category. Fast, easy, and delicious recipes for everyday cooking.'
         />
-        {/* KEYWORDS */}
         <meta
           name='keywords'
           content={metaKeywords}
         />
-        {/* AUTHOR + PUBLISHER META */}
         <meta
           name='author'
-          content={`${BRAND_NAME} Editorial Team`} // Updated
+          content={`${BRAND_NAME} Editorial Team`}
         />
         <meta
           name='publisher'
-          content={BRAND_NAME} // Updated
+          content={BRAND_NAME}
         />
-        {/* CANONICAL */}
         <link
           rel='canonical'
-          href={BRAND_URL} // Updated
+          href={`${BRAND_URL}/categories`}
         />
+
         {/* OPEN GRAPH */}
         <meta
           property='og:title'
-          content={`${BRAND_NAME} — Discover delightful recipes`} // Updated
+          content={`${BRAND_NAME} — Discover delightful recipes`}
         />
         <meta
           property='og:description'
@@ -160,11 +149,11 @@ export default function Home() {
         />
         <meta
           property='og:image'
-          content={`${BRAND_URL}/images/cuisine.jpg`} // Updated
+          content={`${BRAND_URL}/images/cuisine.webp`}
         />
         <meta
           property='og:url'
-          content={BRAND_URL} // Updated
+          content={`${BRAND_URL}/categories`}
         />
         <meta
           property='og:type'
@@ -172,8 +161,9 @@ export default function Home() {
         />
         <meta
           property='og:site_name'
-          content={BRAND_NAME} // Updated
+          content={BRAND_NAME}
         />
+
         {/* TWITTER */}
         <meta
           name='twitter:card'
@@ -181,7 +171,7 @@ export default function Home() {
         />
         <meta
           name='twitter:title'
-          content={`${BRAND_NAME} — Discover delightful recipes`} // Updated
+          content={`${BRAND_NAME} — Discover delightful recipes`}
         />
         <meta
           name='twitter:description'
@@ -189,8 +179,9 @@ export default function Home() {
         />
         <meta
           name='twitter:image'
-          content={`${BRAND_URL}/images/cuisine.jpg`} // Updated
+          content={`${BRAND_URL}/images/cuisine.webp`}
         />
+
         {/* STRUCTURED DATA */}
         <script
           type='application/ld+json'
@@ -198,7 +189,7 @@ export default function Home() {
         />
         <script
           type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
         />
       </Head>
 
@@ -208,8 +199,12 @@ export default function Home() {
       <div className='vr-hero'>
         <img
           className='vr-hero__image'
-          src='/images/cuisine.jpg'
+          src='/images/cuisine.webp'
           alt='hero'
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/images/hero-banner2.webp';
+          }}
         />
         <div className='vr-hero__overlay'>
           <h1 className='vr-hero__title'>
@@ -244,7 +239,7 @@ export default function Home() {
               <div className='vr-category__header'>
                 <h3 className='vr-category__title'>{cuisineName} Recipes</h3>
                 <Link
-                  href={`/categories/${encodeURIComponent(cuisineName)}`} // Corrected URL structure
+                  href={`/categories/${encodeURIComponent(cuisineName)}`}
                   className='vr-category__link'
                 >
                   View all {cuisineName} recipes →
@@ -266,7 +261,6 @@ export default function Home() {
                     {/* Insert Ad after every 6th recipe */}
                     {(index + 1) % 6 === 0 && (
                       <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
-                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
                         <AdSlot
                           id='101'
                           position='in-feed'

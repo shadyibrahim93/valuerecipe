@@ -64,7 +64,7 @@ export default function RecipeCard({ recipe }) {
           aria-hidden='true'
         >
           <Image
-            src={`/images/recipes/${recipe.image_url}.jpg`}
+            src={`/images/recipes/${recipe.image_url}.webp`}
             alt={recipe.title}
             width={300}
             height={300}

@@ -97,7 +97,7 @@ export default function CategoryPage({
     ? 'Trending Recipes'
     : (slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : '') + ' Recipes';
 
-  const heroImage = `/images/categories/${slug?.toLowerCase()}-category.jpg`;
+  const heroImage = `/images/categories/${slug?.toLowerCase()}-category.webp`;
 
   // ----------------------------------------
   // 0. RESET STATE ON NAVIGATION
@@ -268,7 +268,7 @@ export default function CategoryPage({
           src={heroImage}
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/images/hero-banner2.jpg';
+            e.target.src = '/images/hero-banner2.webp';
           }}
           alt={displayTitle}
           className='vr-category-hero__image'

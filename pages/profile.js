@@ -4,12 +4,11 @@ import Head from 'next/head';
 import { supabase } from '../lib/supabaseClient';
 import { useUser } from '../components/UserContext';
 import RecipeCard from '../components/RecipeCard';
-import MealPlanner from '../components/MealPlanner';
-import AdSlot from '../components/AdSlot';
 import { getFavoriteIds } from '../lib/favorites';
 import FavoriteAddBox from '../components/FavoriteAddBox';
 import CreateFromIngredients from '../components/CreateFromIngredients';
 import { BRAND_NAME } from '../lib/constants';
+import SideBar from '../components/SideBar.js';
 
 // System categories always present:
 const SYSTEM_CATEGORIES = [
@@ -338,7 +337,7 @@ export default function ProfilePage() {
     return (
       <div className='vr-page'>
         <Head>
-          <title>ValueRecipe — Profile</title>
+          <title>{BRAND_NAME} — Profile</title>
         </Head>
 
         <div className='vr-auth'>
@@ -453,7 +452,13 @@ export default function ProfilePage() {
   return (
     <div className='vr-page'>
       <Head>
-        <title>ValueRecipe — Profile</title>
+        <title>
+          {BRAND_NAME} —{' '}
+          {userProfile?.first_name + "'s" ||
+            user?.user_metadata?.first_name + "'s" ||
+            'Chef'}{' '}
+          Profile
+        </title>
       </Head>
 
       <h1 className='vr-page__title'>
@@ -613,12 +618,7 @@ export default function ProfilePage() {
         </div>
 
         {/* SIDEBAR */}
-        <aside className='vr-sidebar'>
-          <MealPlanner />
-          <div className='vr-profile__ad'>
-            <AdSlot position='inline' />
-          </div>
-        </aside>
+        <SideBar />
       </div>
     </div>
   );

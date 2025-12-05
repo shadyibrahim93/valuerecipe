@@ -23,13 +23,13 @@
     font-size: 0.9rem;
 
     a {
-      color: #ffd66b;
+      color: var(--vr-primary);
       text-decoration: underline;
     }
   }
 
   &__button {
-    background: #ffb300;
+    background: var(--vr-primary);
     border: none;
     padding: 0.55rem 1rem;
     border-radius: 6px;
@@ -39,7 +39,8 @@
     transition: 0.2s ease;
 
     &:hover {
-      background: #ffca47;
+      color: #fff;
+      background: var(--vr-accent);
     }
   }
 }

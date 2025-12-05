@@ -179,7 +179,7 @@ export default function CommentItem({
                   <div className='vr-comment__header'>
                     <div>
                       <div className='vr-comment__name'>
-                        {reply.profiles?.first_name || 'ValueRecipe User'}
+                        {reply.profiles?.first_name || `${BRAND_NAME} User`}
                       </div>
                       <div className='vr-comment__meta'>
                         {replyMemberYear && (

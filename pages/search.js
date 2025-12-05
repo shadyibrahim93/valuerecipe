@@ -1,62 +1,73 @@
 // pages/search.js
-import { BRAND_NAME, BRAND_URL } from '../lib/constants'; // BRAND_URL ADDED
-
+import { BRAND_NAME, BRAND_URL, REVALIDATE_TIME } from '../lib/constants';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useMemo } from 'react';
+import { supabase } from '../lib/supabaseClient'; // 👈 Added for Server Side Fetching
 import RecipeCard from '../components/RecipeCard';
 import CreateFromIngredients from '../components/CreateFromIngredients';
 import Link from 'next/link';
 import AdSlot from '../components/AdSlot';
 import SideBar from '../components/SideBar';
 
-export default function SearchResultsPage() {
+// ----------------------------------------
+// 1. SERVER SIDE BUILD (ISR) for TRENDING
+// ----------------------------------------
+export async function getStaticProps() {
+  // 👇 THE SAFE COLUMN LIST
+  const safeColumns =
+    'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine';
+
+  // Fetch Top Rated / Trending Recipes for the "Empty State"
+  const { data: trendingRecipes } = await supabase
+    .from('recipes')
+    .select(safeColumns) // 👈 Optimized Selection
+    .order('rating', { ascending: false })
+    .order('rating_count', { ascending: false })
+    .limit(11);
+
+  return {
+    props: {
+      initialTrending: trendingRecipes || []
+    },
+    revalidate: REVALIDATE_TIME // Update trending list every 60s
+  };
+}
+
+// ----------------------------------------
+// 2. CLIENT SIDE COMPONENT
+// ----------------------------------------
+export default function SearchResultsPage({ initialTrending = [] }) {
   const router = useRouter();
   const { q } = router.query;
 
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [trending, setTrending] = useState([]);
+  const [loading, setLoading] = useState(false); // Default to false (we have trending data)
 
   /* ----------------------------------------
-      LOAD SEARCH RESULTS
+      LOAD SEARCH RESULTS (Client Side)
   ---------------------------------------- */
   useEffect(() => {
-    if (!q) return;
+    if (!q) {
+      setResults([]);
+      return;
+    }
 
     setLoading(true);
 
+    // Note: We can't optimize this API call here without editing /api/search
+    // But since it's a specific search, the result set is usually small anyway.
     fetch(`/api/search?q=${encodeURIComponent(q)}`)
       .then((r) => r.json())
       .then((d) => {
         setResults(d.data || []);
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   }, [q]);
 
   /* ----------------------------------------
-      LOAD TOP-RATED TRENDING RECIPES
-  ---------------------------------------- */
-  const loadTrending = async () => {
-    const res = await fetch(`/api/recipes?page=1&per_page=50`);
-    const json = await res.json();
-    let all = json.data || [];
-
-    // Sort by rating DESC
-    all.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-
-    // Take top 11
-    setTrending(all.slice(0, 11));
-  };
-
-  useEffect(() => {
-    if (results.length === 0) {
-      loadTrending();
-    }
-  }, [results]);
-
-  /* ----------------------------------------
-      SEO TITLE / DESCRIPTION / KEYWORDS
+      SEO METADATA
   ---------------------------------------- */
   const pageTitle = q
     ? `Search results for "${q}" — ${BRAND_NAME}`
@@ -64,7 +75,7 @@ export default function SearchResultsPage() {
 
   const pageDescription = q
     ? `Browse recipe results for "${q}" on ${BRAND_NAME}. Discover curated recipes by ingredients, cuisine, and more.`
-    : `Search thousands of recipes on ${BRAND_NAME} by keyword, ingredients, cuisine, and more.`; // Cleaned template string
+    : `Search thousands of recipes on ${BRAND_NAME} by keyword, ingredients, cuisine, and more.`;
 
   const metaKeywords = useMemo(() => {
     if (!q) return `recipe search, search recipes, ${BRAND_NAME}`;
@@ -72,11 +83,11 @@ export default function SearchResultsPage() {
   }, [q]);
 
   const canonicalUrl = q
-    ? `${BRAND_URL}/search?q=${encodeURIComponent(q)}` // Updated
-    : `${BRAND_URL}/search`; // Updated
+    ? `${BRAND_URL}/search?q=${encodeURIComponent(q)}`
+    : `${BRAND_URL}/search`;
 
   /* ----------------------------------------
-      JSON-LD: SearchResultsPage schema
+      JSON-LD SCHEMA
   ---------------------------------------- */
   const searchSchema = {
     '@context': 'https://schema.org',
@@ -86,7 +97,7 @@ export default function SearchResultsPage() {
     url: canonicalUrl,
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${BRAND_URL}/search?q={search_term_string}`, // Updated
+      target: `${BRAND_URL}/search?q={search_term_string}`,
       'query-input': 'required name=search_term_string'
     }
   };
@@ -94,32 +105,23 @@ export default function SearchResultsPage() {
   return (
     <>
       <Head>
-        {/* TITLE */}
         <title>{pageTitle}</title>
-
-        {/* DESCRIPTION */}
         <meta
           name='description'
           content={pageDescription}
         />
-
-        {/* KEYWORDS */}
         <meta
           name='keywords'
           content={metaKeywords}
         />
-
-        {/* AUTHOR / PUBLISHER */}
         <meta
           name='author'
-          content='ValueRecipe Editorial Team'
+          content={`${BRAND_NAME} Editorial Team`}
         />
         <meta
           name='publisher'
-          content='ValueRecipe'
+          content={BRAND_NAME}
         />
-
-        {/* CANONICAL */}
         <link
           rel='canonical'
           href={canonicalUrl}
@@ -144,11 +146,11 @@ export default function SearchResultsPage() {
         />
         <meta
           property='og:image'
-          content={`${BRAND_URL}/images/og-search.jpg`} // Updated
+          content={`${BRAND_URL}/images/og-search.webp`}
         />
         <meta
           property='og:site_name'
-          content='ValueRecipe'
+          content={BRAND_NAME}
         />
 
         {/* TWITTER */}
@@ -166,23 +168,24 @@ export default function SearchResultsPage() {
         />
         <meta
           name='twitter:image'
-          content={`${BRAND_URL}/images/og-search.jpg`} // Updated
+          content={`${BRAND_URL}/images/og-search.webp`}
         />
 
-        {/* STRUCTURED DATA: SearchResultsPage */}
+        {/* STRUCTURED DATA */}
         <script
           type='application/ld+json'
           dangerouslySetInnerHTML={{ __html: JSON.stringify(searchSchema) }}
         />
       </Head>
+
       <div className='vr-home-layout'>
         <div className='vr-category__container'>
+          {/* SEARCH RESULTS SECTION */}
           <div className='vr-card'>
             <h1 className='vr-category__title'>
               {q ? `Search results for "${q}"` : 'Search recipes'}
             </h1>
 
-            {/* RESULTS FOUND */}
             {loading ? (
               <p className='vr-search-results__empty'>Searching…</p>
             ) : results.length > 0 ? (
@@ -193,11 +196,9 @@ export default function SearchResultsPage() {
                       key={recipe.id}
                       recipe={recipe}
                     />
-
                     {/* Insert Ad after every 6th recipe */}
                     {(index + 1) % 6 === 0 && (
                       <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
-                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
                         <AdSlot
                           id='101'
                           position='in-feed'
@@ -210,18 +211,19 @@ export default function SearchResultsPage() {
               </div>
             ) : (
               <p className='vr-search-results__empty'>
-                No recipes found. Try another keyword, or check below for recipe
-                ideas.
+                {q
+                  ? `No recipes found for "${q}". Try checking the trending recipes below.`
+                  : 'Enter a keyword above to find delicious recipes.'}
               </p>
             )}
           </div>
 
-          {/* CREATE FROM INGREDIENTS - ALWAYS VISIBLE */}
+          {/* CREATE FROM INGREDIENTS */}
           <div className='vr-card'>
             <CreateFromIngredients />
           </div>
 
-          {/* TRENDING NOW (TOP RATED) - ALWAYS VISIBLE */}
+          {/* TRENDING NOW (Always visible, pre-loaded) */}
           <div className='vr-card'>
             <div className='vr-section'>
               <div className='vr-category__header'>
@@ -234,17 +236,15 @@ export default function SearchResultsPage() {
                 </Link>
               </div>
               <div className='vr-category__grid'>
-                {trending.map((recipe, index) => (
+                {initialTrending.map((recipe, index) => (
                   <>
                     <RecipeCard
                       key={recipe.id}
                       recipe={recipe}
                     />
-
                     {/* Insert Ad after every 6th recipe */}
                     {(index + 1) % 6 === 0 && (
                       <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
-                        {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
                         <AdSlot
                           id='101'
                           position='in-feed'
@@ -258,6 +258,7 @@ export default function SearchResultsPage() {
             </div>
           </div>
         </div>
+
         <SideBar />
       </div>
     </>

@@ -4,15 +4,14 @@ import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
-import { REVALIDATE_TIME } from '../lib/constants';
-import { BRAND_NAME } from '../lib/constants';
+import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants'; // 👈 Merged imports
 import SideBar from '../components/SideBar';
 import AdSlot from '../components/AdSlot';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'breakfast';
 const PAGE_TITLE = 'Best Breakfast Recipes & Easy Morning Ideas';
-const HERO_IMAGE = '/images/categories/breakfast-category.jpg';
+const HERO_IMAGE = '/images/categories/breakfast-category.webp';
 
 // ----------------------------------------
 // 1. SERVER SIDE BUILD (ISR)
@@ -21,8 +20,12 @@ export async function getStaticProps() {
   // --- A. Query Logic ---
   const query = supabase
     .from('recipes')
-    .select('*', { count: 'exact' })
-    .ilike('serving_time', SERVING_TIME); // Case-insensitive match
+    // 👇 OPTIMIZED: Select ONLY columns needed for the Card to reduce page size
+    .select(
+      'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine',
+      { count: 'exact' }
+    )
+    .ilike('serving_time', SERVING_TIME);
 
   // --- B. Fetch First Page (Limit 24) ---
   const {
@@ -37,7 +40,6 @@ export async function getStaticProps() {
   }
 
   // --- C. Fetch Max Time (for initial filter state) ---
-  // Lightweight query just to get time columns to set the slider range
   const { data: timeData } = await supabase
     .from('recipes')
     .select('total_time, cook_time')
@@ -54,7 +56,6 @@ export async function getStaticProps() {
       initialTotalCount: count || 0,
       initialMaxTime
     },
-    // 👇 Update this page in the background at most once every 60 seconds
     revalidate: REVALIDATE_TIME
   };
 }
@@ -72,7 +73,6 @@ export default function BreakfastPage({
   const [totalCount, setTotalCount] = useState(initialTotalCount);
 
   // "All Recipes" is used by the FilterPanel to calculate counts/stats.
-  // We load this lazily so it doesn't block the initial render.
   const [allRecipes, setAllRecipes] = useState([]);
 
   const [filters, setFilters] = useState({
@@ -108,7 +108,6 @@ export default function BreakfastPage({
         const base = json.data || [];
         setAllRecipes(base);
 
-        // If the full dataset has a larger max time, update the slider
         const maxT = Math.max(
           ...base.map((r) => r.total_time || r.cook_time || 0)
         );
@@ -120,7 +119,6 @@ export default function BreakfastPage({
       }
     }
 
-    // Small delay to let the UI paint first
     const timer = setTimeout(loadFilterData, 500);
     return () => clearTimeout(timer);
   }, []);
@@ -162,7 +160,6 @@ export default function BreakfastPage({
 
       setRecipes((prev) => (replace ? data : [...prev, ...data]));
 
-      // Determine if there are more results
       const currentCount = replace ? data.length : recipes.length + data.length;
       const serverTotal = json.total_count || json.count || 0;
 
@@ -188,7 +185,6 @@ export default function BreakfastPage({
   // ----------------------------------------
   const isFirstRun = useRef(true);
   useEffect(() => {
-    // Skip the very first run because we already have InitialProps
     if (isFirstRun.current) {
       isFirstRun.current = false;
       return;
@@ -242,7 +238,7 @@ export default function BreakfastPage({
           className='vr-category-hero__image'
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/images/hero-banner2.jpg';
+            e.target.src = '/images/hero-banner2.webp';
           }}
         />
         <div className='vr-category-hero__overlay'>

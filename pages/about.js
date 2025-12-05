@@ -10,13 +10,13 @@ export default function AboutPage() {
   const orgSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'ValueRecipe',
+    name: BRAND_URL,
     url: BRAND_URL,
-    logo: `${BRAND_URL}/logo.png`,
+    logo: `${BRAND_URL}/images/logo/brand_logo.webp`,
     sameAs: [
-      'https://www.facebook.com/ValueRecipe',
-      'https://www.instagram.com/ValueRecipe',
-      'https://www.pinterest.com/ValueRecipe'
+      `https://www.facebook.com/${BRAND_URL}`,
+      `https://www.instagram.com/${BRAND_URL}`,
+      `https://www.pinterest.com/${BRAND_URL}`
     ]
   };
 
@@ -57,7 +57,7 @@ export default function AboutPage() {
         />
         <meta
           property='og:image'
-          content={`${BRAND_URL}/images/og-about.jpg`}
+          content={`${BRAND_URL}/images/og-about.webp`}
         />
         <meta
           property='og:url'
@@ -79,7 +79,7 @@ export default function AboutPage() {
         />
         <meta
           name='twitter:image'
-          content={`${BRAND_URL}/images/og-about.jpg`}
+          content={`${BRAND_URL}/images/og-about.webp`}
         />
 
         {/* Schema */}

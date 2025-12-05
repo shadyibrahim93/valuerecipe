@@ -131,7 +131,7 @@ export default function CookingMode({
             }}
           >
             <Image
-              src={`/images/ingredients/${hovered.image}.jpg`}
+              src={`/images/ingredients/${hovered.image}.webp`}
               alt=''
               width={70}
               height={70}

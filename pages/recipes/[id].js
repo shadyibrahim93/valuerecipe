@@ -50,17 +50,17 @@ export default function RecipePageContainer({ recipe }) {
     '@context': 'https://schema.org/',
     '@type': 'Recipe',
     name: recipe.title,
-    image: `${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`,
+    image: `${BRAND_URL}/images/recipes/${recipe.image_url}.webp`,
     author: {
       '@type': 'Organization',
-      name: 'ValueRecipe Editorial Team'
+      name: `${BRAND_NAME} Editorial Team`
     },
     publisher: {
       '@type': 'Organization',
-      name: 'ValueRecipe',
+      name: BRAND_NAME,
       logo: {
         '@type': 'ImageObject',
-        url: `${BRAND_URL}/logo.png`
+        url: `${BRAND_URL}/logo.webp`
       }
     },
     datePublished: recipe.created_at,
@@ -111,11 +111,11 @@ export default function RecipePageContainer({ recipe }) {
 
         <meta
           name='author'
-          content='ValueRecipe Editorial Team'
+          content={`${BRAND_NAME} Editorial Team`}
         />
         <meta
           name='publisher'
-          content='ValueRecipe'
+          content={`${BRAND_NAME}`}
         />
 
         {/* CANONICAL */}
@@ -135,7 +135,7 @@ export default function RecipePageContainer({ recipe }) {
         />
         <meta
           property='og:image'
-          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`}
+          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.webp`}
         />
         <meta
           property='og:url'
@@ -147,7 +147,7 @@ export default function RecipePageContainer({ recipe }) {
         />
         <meta
           property='og:site_name'
-          content='ValueRecipe'
+          content={`${BRAND_NAME}`}
         />
 
         {/* TWITTER CARDS */}
@@ -165,17 +165,17 @@ export default function RecipePageContainer({ recipe }) {
         />
         <meta
           name='twitter:image'
-          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`}
+          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.webp`}
         />
         <meta
           name='twitter:site'
-          content='@ValueRecipe'
+          content='@RekaDish'
         />
 
         {/* PINTEREST */}
         <meta
           name='pin:media'
-          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.jpg`}
+          content={`${BRAND_URL}/images/recipes/${recipe.image_url}.webp`}
         />
         <meta
           name='pin:description'

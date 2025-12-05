@@ -48,7 +48,7 @@ async function seed() {
           text: 'Crack eggs into tomato sauce and sprinkle feta. Bake 8-10 minutes.'
         }
       ],
-      image_url: '/images/shakshuka.jpg',
+      image_url: '/images/shakshuka.webp',
       nutrition: { calories: 380 }
     },
     {
@@ -74,7 +74,7 @@ async function seed() {
           text: 'Pan fry until crispy and finish in oven with lemon slices.'
         }
       ],
-      image_url: '/images/lemon-chicken.jpg',
+      image_url: '/images/lemon-chicken.webp',
       nutrition: { calories: 560 }
     }
   ];

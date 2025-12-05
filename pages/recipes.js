@@ -5,7 +5,7 @@ import RecipeCard from '../components/RecipeCard';
 import AdSlot from '../components/AdSlot';
 import FilterPanel from '../components/FilterPanel';
 import MealPlanner from '../components/MealPlanner';
-import { REVALIDATE_TIME } from '../lib/constants';
+import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants';
 import SideBar from '../components/SideBar';
 
 const PER_PAGE = 24;
@@ -223,7 +223,7 @@ export default function Recipes({
   return (
     <>
       <Head>
-        <title>ValueRecipe — Discover delightful recipes</title>
+        <title>{BRAND_NAME} — Discover delightful recipes</title>
         <meta
           name='description'
           content='Browse our entire collection of delicious recipes. Filter by ingredients, difficulty, and cooking time.'

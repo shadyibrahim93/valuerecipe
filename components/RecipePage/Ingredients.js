@@ -155,8 +155,8 @@ export default function IngredientsSection({ recipe, servings }) {
                   <Image
                     src={
                       i.image
-                        ? `/images/ingredients/${i.image}.jpg`
-                        : '/images/ingredients/placeholder.jpg'
+                        ? `/images/ingredients/${i.image}.webp`
+                        : '/images/ingredients/placeholder.webp'
                     }
                     alt={i.ingredient}
                     className='vr-ingredients__img'

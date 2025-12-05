@@ -464,8 +464,8 @@ export default function MealPlanner() {
                       <Image
                         src={
                           entry.image
-                            ? `/images/ingredients/${entry.image}.jpg`
-                            : '/images/ingredients/placeholder.jpg'
+                            ? `/images/ingredients/${entry.image}.webp`
+                            : '/images/ingredients/placeholder.webp'
                         }
                         alt={entry.ingredient}
                         width={46}
