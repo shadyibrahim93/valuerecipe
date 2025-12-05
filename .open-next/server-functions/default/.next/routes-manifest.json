@@ -238,55 +238,55 @@
   "dataRoutes": [
     {
       "page": "/",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/index\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/index\\.json$"
     },
     {
       "page": "/admin/recipes",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/admin/recipes\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/admin/recipes\\.json$"
     },
     {
       "page": "/breakfast",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/breakfast\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/breakfast\\.json$"
     },
     {
       "page": "/categories",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/categories\\.json$"
     },
     {
       "page": "/categories/[slug]",
       "routeKeys": {
         "nxtPslug": "nxtPslug"
       },
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/([^/]+?)\\.json$",
-      "namedDataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/(?<nxtPslug>[^/]+?)\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/categories/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/categories/(?<nxtPslug>[^/]+?)\\.json$"
     },
     {
       "page": "/dessert",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/dessert\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/dessert\\.json$"
     },
     {
       "page": "/dinner",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/dinner\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/dinner\\.json$"
     },
     {
       "page": "/lunch",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/lunch\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/lunch\\.json$"
     },
     {
       "page": "/recipes",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/recipes\\.json$"
     },
     {
       "page": "/recipes/[id]",
       "routeKeys": {
         "nxtPid": "nxtPid"
       },
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/([^/]+?)\\.json$",
-      "namedDataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/(?<nxtPid>[^/]+?)\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/recipes/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/recipes/(?<nxtPid>[^/]+?)\\.json$"
     },
     {
       "page": "/search",
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/search\\.json$"
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/search\\.json$"
     }
   ],
   "rsc": {

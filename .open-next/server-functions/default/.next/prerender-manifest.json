@@ -1,11 +1,11 @@
 {
   "version": 4,
   "routes": {
-    "/categories": {
+    "/breakfast": {
       "initialRevalidateSeconds": 10800,
       "initialExpireSeconds": 31536000,
       "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories.json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/breakfast.json",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -15,11 +15,11 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/breakfast": {
+    "/categories": {
       "initialRevalidateSeconds": 10800,
       "initialExpireSeconds": 31536000,
       "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/breakfast.json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/categories.json",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -33,21 +33,7 @@
       "initialRevalidateSeconds": 10800,
       "initialExpireSeconds": 31536000,
       "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/dessert.json",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/dinner": {
-      "initialRevalidateSeconds": 10800,
-      "initialExpireSeconds": 31536000,
-      "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/dinner.json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/dessert.json",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -61,7 +47,7 @@
       "initialRevalidateSeconds": 60,
       "initialExpireSeconds": 31536000,
       "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/index.json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/index.json",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -75,21 +61,7 @@
       "initialRevalidateSeconds": 10800,
       "initialExpireSeconds": 31536000,
       "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes.json",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/lunch": {
-      "initialRevalidateSeconds": 10800,
-      "initialExpireSeconds": 31536000,
-      "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/lunch.json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/recipes.json",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -103,7 +75,35 @@
       "initialRevalidateSeconds": 10800,
       "initialExpireSeconds": 31536000,
       "srcRoute": null,
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/search.json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/search.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/lunch": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/lunch.json",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/dinner": {
+      "initialRevalidateSeconds": 10800,
+      "initialExpireSeconds": 31536000,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/dinner.json",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -117,9 +117,9 @@
   "dynamicRoutes": {
     "/categories/[slug]": {
       "routeRegex": "^/categories/([^/]+?)(?:/)?$",
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/[slug].json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/categories/[slug].json",
       "fallback": null,
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/categories/([^/]+?)\\.json$",
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/categories/([^/]+?)\\.json$",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -131,9 +131,9 @@
     },
     "/recipes/[id]": {
       "routeRegex": "^/recipes/([^/]+?)(?:/)?$",
-      "dataRoute": "/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/[id].json",
+      "dataRoute": "/_next/data/xHP9vKuSww8cfwxaQZepn/recipes/[id].json",
       "fallback": null,
-      "dataRouteRegex": "^/_next/data/rwkKQUUnZwOE8zRbH6FB3/recipes/([^/]+?)\\.json$",
+      "dataRouteRegex": "^/_next/data/xHP9vKuSww8cfwxaQZepn/recipes/([^/]+?)\\.json$",
       "allowHeader": [
         "host",
         "x-matched-path",
