@@ -113,12 +113,32 @@ export default function BreakfastPage({
   // FETCH RECIPES PAGE (Client Logic)
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
+    // If we already know there's no more data, don't even try
+    if (!hasMore && !replace) return;
+
     setIsLoading(true);
     const qs = buildQueryString(pageNumber);
 
     try {
       const res = await fetch(`/api/recipes?${qs}`);
-      const json = await res.json();
+
+      // ✅ If the API returns 500 / HTML / anything non-200, stop infinite scroll
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        console.error('API error fetching recipes', res.status, text);
+        setHasMore(false); // ⬅️ key line: this stops further auto-fetches
+        return;
+      }
+
+      let json;
+      try {
+        json = await res.json();
+      } catch (err) {
+        console.error('Failed to parse recipes JSON', err);
+        setHasMore(false); // ⬅️ stop trying if response isn’t valid JSON
+        return;
+      }
+
       const data = json.data || [];
 
       if (replace || pageNumber === 1) {
@@ -130,6 +150,7 @@ export default function BreakfastPage({
       const currentCount = replace ? data.length : recipes.length + data.length;
       const serverTotal = json.total_count || json.count || 0;
 
+      // If we got fewer items than PER_PAGE or we've hit total, no more pages
       if (
         data.length < PER_PAGE ||
         (serverTotal > 0 && currentCount >= serverTotal)
@@ -142,6 +163,8 @@ export default function BreakfastPage({
       setPage(pageNumber);
     } catch (err) {
       console.error('Failed to fetch recipes', err);
+      // ⬅️ On network error or runtime error, also stop infinite loop
+      setHasMore(false);
     } finally {
       setIsLoading(false);
     }
