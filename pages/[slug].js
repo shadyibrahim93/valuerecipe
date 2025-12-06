@@ -9,27 +9,84 @@ import SideBar from '../components/SideBar';
 import AdSlot from '../components/AdSlot';
 
 const PER_PAGE = 24;
-const SERVING_TIME = 'breakfast';
-const PAGE_TITLE = 'Best Breakfast Recipes & Easy Morning Ideas';
-const HERO_IMAGE = '/images/categories/breakfast-category.webp';
+
+// Central config so you can control title/hero per serving_time
+const SERVING_CONFIG = {
+  breakfast: {
+    servingTime: 'breakfast',
+    pageTitle: 'Best Breakfast Recipes & Easy Morning Ideas',
+    heroImage: '/images/categories/breakfast-category.webp',
+    heading: 'Breakfast Recipes',
+    metaDescription:
+      'Start your day right with our best breakfast recipes. From quick eggs to fluffy pancakes.'
+  },
+  lunch: {
+    servingTime: 'lunch',
+    pageTitle: 'Best Lunch Recipes & Easy Midday Ideas',
+    heroImage: '/images/categories/lunch-category.webp',
+    heading: 'Lunch Recipes',
+    metaDescription:
+      'Find easy and delicious lunch recipes, from fresh salads to hearty bowls.'
+  },
+  dinner: {
+    servingTime: 'dinner',
+    pageTitle: 'Best Dinner Recipes & Easy Evening Ideas',
+    heroImage: '/images/categories/dinner-category.webp',
+    heading: 'Dinner Recipes',
+    metaDescription:
+      'Discover comforting and easy dinner recipes to end your day on a delicious note.'
+  },
+  dessert: {
+    servingTime: 'dessert',
+    pageTitle: 'Best Dessert Recipes & Sweet Treat Ideas',
+    heroImage: '/images/categories/dessert-category.webp',
+    heading: 'Dessert Recipes',
+    metaDescription:
+      'Indulge your sweet tooth with our favorite dessert recipes, from quick treats to showstopper bakes.'
+  }
+};
 
 // ----------------------------------------
-// 1. SERVER SIDE BUILD (ISR)
+// 1. STATIC PATHS (BREAKFAST/LUNCH/DINNER/DESSERT)
 // ----------------------------------------
-export async function getStaticProps() {
+export async function getStaticPaths() {
+  const slugs = Object.keys(SERVING_CONFIG); // ['breakfast', 'lunch', 'dinner', 'dessert']
+
+  return {
+    paths: slugs.map((slug) => ({ params: { slug } })),
+    fallback: 'blocking'
+  };
+}
+
+// ----------------------------------------
+// 2. SERVER SIDE BUILD (ISR) PER SERVING_TIME
+// ----------------------------------------
+export async function getStaticProps({ params }) {
+  const rawSlug = params.slug;
+  const slug = String(rawSlug).toLowerCase();
+
+  const config = SERVING_CONFIG[slug];
+
+  // If slug is not one of breakfast/lunch/dinner/dessert => 404
+  if (!config) {
+    return { notFound: true };
+  }
+
+  const { servingTime } = config;
+
   // Include `ingredients` so FilterPanel can build ingredient pills
   const SAFE_COLUMNS =
     'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine, ingredients';
 
-  // Fetch up to 300 breakfast recipes for filters + first page
+  // Fetch up to 300 recipes for this serving time
   const {
-    data: allBreakfast,
+    data: allRecipes,
     count,
     error
   } = await supabase
     .from('recipes')
     .select(SAFE_COLUMNS, { count: 'exact' })
-    .ilike('serving_time', SERVING_TIME)
+    .ilike('serving_time', servingTime)
     .limit(300);
 
   if (error) {
@@ -37,7 +94,7 @@ export async function getStaticProps() {
     return { notFound: true };
   }
 
-  const safeAll = allBreakfast || [];
+  const safeAll = allRecipes || [];
 
   // First page for initial render
   const initialRecipes = safeAll.slice(0, PER_PAGE);
@@ -50,24 +107,37 @@ export async function getStaticProps() {
 
   return {
     props: {
+      slug,
+      servingTime,
       initialRecipes,
       initialTotalCount: count || safeAll.length || 0,
       initialMaxTime,
       initialAllRecipes: safeAll
     },
-    revalidate: REVALIDATE_TIME
+    revalidate: REVALIDATE_TIME || 3600
   };
 }
 
 // ----------------------------------------
-// 2. CLIENT SIDE COMPONENT
+// 3. CLIENT SIDE COMPONENT
 // ----------------------------------------
-export default function BreakfastPage({
+export default function ServingTimePage({
+  slug,
+  servingTime,
   initialRecipes = [],
   initialTotalCount = 0,
   initialMaxTime = 60,
   initialAllRecipes = []
 }) {
+  const config = SERVING_CONFIG[slug];
+
+  // Safety: if somehow config missing on client
+  if (!config) {
+    return <div className='vr-container'>Invalid serving time.</div>;
+  }
+
+  const { pageTitle, heroImage, heading, metaDescription } = config;
+
   // Initialize state with Server Data (Instant Load!)
   const [recipes, setRecipes] = useState(initialRecipes);
   const [totalCount, setTotalCount] = useState(initialTotalCount);
@@ -89,6 +159,7 @@ export default function BreakfastPage({
 
   const listRef = useRef(null);
   const sentinelRef = useRef(null);
+  const isLoadingRef = useRef(false); // to prevent double-loads in IntersectionObserver
 
   // ----------------------------------------
   // HELPER: BUILD QUERY STRING
@@ -97,7 +168,7 @@ export default function BreakfastPage({
     const params = new URLSearchParams();
     params.set('page', pageNumber);
     params.set('per_page', PER_PAGE);
-    params.set('serving_time', SERVING_TIME);
+    params.set('serving_time', servingTime);
 
     if (filters.ingredients.length > 0)
       params.set('ingredients', filters.ingredients.join(','));
@@ -113,32 +184,14 @@ export default function BreakfastPage({
   // FETCH RECIPES PAGE (Client Logic)
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
-    // If we already know there's no more data, don't even try
-    if (!hasMore && !replace) return;
-
     setIsLoading(true);
+    isLoadingRef.current = true;
+
     const qs = buildQueryString(pageNumber);
 
     try {
       const res = await fetch(`/api/recipes?${qs}`);
-
-      // ✅ If the API returns 500 / HTML / anything non-200, stop infinite scroll
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        console.error('API error fetching recipes', res.status, text);
-        setHasMore(false); // ⬅️ key line: this stops further auto-fetches
-        return;
-      }
-
-      let json;
-      try {
-        json = await res.json();
-      } catch (err) {
-        console.error('Failed to parse recipes JSON', err);
-        setHasMore(false); // ⬅️ stop trying if response isn’t valid JSON
-        return;
-      }
-
+      const json = await res.json();
       const data = json.data || [];
 
       if (replace || pageNumber === 1) {
@@ -150,7 +203,6 @@ export default function BreakfastPage({
       const currentCount = replace ? data.length : recipes.length + data.length;
       const serverTotal = json.total_count || json.count || 0;
 
-      // If we got fewer items than PER_PAGE or we've hit total, no more pages
       if (
         data.length < PER_PAGE ||
         (serverTotal > 0 && currentCount >= serverTotal)
@@ -163,10 +215,9 @@ export default function BreakfastPage({
       setPage(pageNumber);
     } catch (err) {
       console.error('Failed to fetch recipes', err);
-      // ⬅️ On network error or runtime error, also stop infinite loop
-      setHasMore(false);
     } finally {
       setIsLoading(false);
+      isLoadingRef.current = false;
     }
   };
 
@@ -184,38 +235,41 @@ export default function BreakfastPage({
     setPage(1);
     setHasMore(true);
     fetchRecipesPage(1, true); // replace = true
-  }, [filters]);
+  }, [filters, servingTime]);
 
   // ----------------------------------------
   // INFINITE SCROLL
   // ----------------------------------------
   useEffect(() => {
-    if (!hasMore || isLoading) return;
+    if (!hasMore) return;
     if (!sentinelRef.current) return;
 
     const obs = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          obs.unobserve(entries[0].target);
-          fetchRecipesPage(page + 1);
-        }
+        const entry = entries[0];
+        if (!entry.isIntersecting) return;
+
+        // Prevent chaining multiple loads while one is in-flight
+        if (isLoadingRef.current) return;
+
+        fetchRecipesPage(page + 1);
       },
       { rootMargin: '200px', threshold: 0.1 }
     );
 
     obs.observe(sentinelRef.current);
     return () => obs.disconnect();
-  }, [hasMore, isLoading, page, filters]);
+  }, [hasMore, page, filters, servingTime]);
 
   return (
     <>
       <Head>
         <title>
-          {PAGE_TITLE} | {BRAND_NAME}
+          {pageTitle} | {BRAND_NAME}
         </title>
         <meta
           name='description'
-          content='Start your day right with our best breakfast recipes. From quick eggs to fluffy pancakes.'
+          content={metaDescription}
         />
       </Head>
 
@@ -223,8 +277,8 @@ export default function BreakfastPage({
 
       <div className='vr-category-hero'>
         <img
-          src={HERO_IMAGE}
-          alt={PAGE_TITLE}
+          src={heroImage}
+          alt={pageTitle}
           className='vr-category-hero__image'
           onError={(e) => {
             e.target.onerror = null;
@@ -232,7 +286,7 @@ export default function BreakfastPage({
           }}
         />
         <div className='vr-category-hero__overlay'>
-          <h1 className='vr-category-hero__title'>{PAGE_TITLE}</h1>
+          <h1 className='vr-category-hero__title'>{pageTitle}</h1>
         </div>
       </div>
 
@@ -249,7 +303,7 @@ export default function BreakfastPage({
           ref={listRef}
         >
           <div className='vr-category-main__header'>
-            <h3 className='vr-category__title'>Breakfast Recipes</h3>
+            <h3 className='vr-category__title'>{heading}</h3>
             <span className='vr-category-main__meta'>
               {totalCount
                 ? `${recipes.length} out of ${totalCount} recipes loaded`
@@ -292,9 +346,7 @@ export default function BreakfastPage({
           )}
 
           {!isLoading && recipes.length === 0 && (
-            <div className='vr-no-results'>
-              No {SERVING_TIME} recipes found.
-            </div>
+            <div className='vr-no-results'>No {servingTime} recipes found.</div>
           )}
         </main>
 

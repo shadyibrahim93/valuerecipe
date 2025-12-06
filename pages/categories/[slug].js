@@ -90,7 +90,6 @@ export default function CategoryPage({
 
   const [filters, setFilters] = useState(initialFiltersRef.current);
   const [hasUserFilters, setHasUserFilters] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(
     initialRecipes.length < initialTotalCount
@@ -99,6 +98,7 @@ export default function CategoryPage({
 
   const listRef = useRef(null);
   const sentinelRef = useRef(null);
+  const isLoadingRef = useRef(false);
 
   const displayTitle = isTrending
     ? 'Trending Recipes'
@@ -159,6 +159,7 @@ export default function CategoryPage({
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
     setIsLoading(true);
+    isLoadingRef.current = true; // NEW
 
     const qs = buildQueryString(pageNumber);
     try {
@@ -189,6 +190,7 @@ export default function CategoryPage({
       console.error(err);
     } finally {
       setIsLoading(false);
+      isLoadingRef.current = false; // NEW
     }
   };
 
@@ -234,13 +236,16 @@ export default function CategoryPage({
   // 5. INFINITE SCROLL
   // ----------------------------------------
   useEffect(() => {
-    if (!hasMore || isLoading) return;
+    if (!hasMore) return;
     if (!sentinelRef.current) return;
 
     const obs = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          obs.unobserve(entries[0].target);
+        const entry = entries[0];
+        if (!entry.isIntersecting) return;
+
+        // Use the ref so we don't re-fetch while already loading
+        if (!isLoadingRef.current) {
           fetchRecipesPage(page + 1);
         }
       },
@@ -248,9 +253,11 @@ export default function CategoryPage({
     );
 
     obs.observe(sentinelRef.current);
+
     return () => obs.disconnect();
-    // filters included so queries for page 2+ respect current filters
-  }, [hasMore, isLoading, page, filters, slug]);
+    // NOTE: we intentionally do NOT depend on `isLoading` here,
+    // we use `isLoadingRef` instead to avoid recreating the observer
+  }, [hasMore, page, filters, slug]);
 
   if (router.isFallback) {
     return <div className='vr-container'>Loading...</div>;
