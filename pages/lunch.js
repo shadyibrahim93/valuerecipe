@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
-import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants'; // 👈 Merged imports
+import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants';
 import SideBar from '../components/SideBar';
 import AdSlot from '../components/AdSlot';
 
@@ -17,44 +17,43 @@ const HERO_IMAGE = '/images/categories/lunch-category.webp';
 // 1. SERVER SIDE BUILD (ISR)
 // ----------------------------------------
 export async function getStaticProps() {
-  // --- A. Query Logic ---
-  const query = supabase
-    .from('recipes')
-    // 👇 OPTIMIZED: Select ONLY columns needed for the Card to reduce page size
-    .select(
-      'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine',
-      { count: 'exact' }
-    )
-    .ilike('serving_time', SERVING_TIME);
+  // Include `ingredients` so FilterPanel can build ingredient pills
+  const SAFE_COLUMNS =
+    'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine, ingredients';
 
-  // --- B. Fetch First Page (Limit 24) ---
+  // Fetch up to 300 lunch recipes for filters + first page
   const {
-    data: initialRecipes,
+    data: allLunch,
     count,
     error
-  } = await query.range(0, PER_PAGE - 1);
+  } = await supabase
+    .from('recipes')
+    .select(SAFE_COLUMNS, { count: 'exact' })
+    .ilike('serving_time', SERVING_TIME)
+    .limit(300);
 
   if (error) {
     console.error('ISR Error:', error);
     return { notFound: true };
   }
 
-  // --- C. Fetch Max Time (for initial filter state) ---
-  const { data: timeData } = await supabase
-    .from('recipes')
-    .select('total_time, cook_time')
-    .ilike('serving_time', SERVING_TIME)
-    .limit(100);
+  const safeAll = allLunch || [];
 
-  const initialMaxTime = timeData
-    ? Math.max(...timeData.map((r) => r.total_time || r.cook_time || 0))
-    : 60;
+  // First page for initial render
+  const initialRecipes = safeAll.slice(0, PER_PAGE);
+
+  // Max time for initial filter range
+  const initialMaxTime =
+    safeAll.length > 0
+      ? Math.max(...safeAll.map((r) => r.total_time || r.cook_time || 0))
+      : 60;
 
   return {
     props: {
-      initialRecipes: initialRecipes || [],
-      initialTotalCount: count || 0,
-      initialMaxTime
+      initialRecipes,
+      initialTotalCount: count || safeAll.length || 0,
+      initialMaxTime,
+      initialAllRecipes: safeAll
     },
     revalidate: REVALIDATE_TIME
   };
@@ -66,14 +65,15 @@ export async function getStaticProps() {
 export default function LunchPage({
   initialRecipes = [],
   initialTotalCount = 0,
-  initialMaxTime = 60
+  initialMaxTime = 60,
+  initialAllRecipes = []
 }) {
   // Initialize state with Server Data (Instant Load!)
   const [recipes, setRecipes] = useState(initialRecipes);
   const [totalCount, setTotalCount] = useState(initialTotalCount);
 
-  // "All Recipes" is used by the FilterPanel to calculate counts/stats.
-  const [allRecipes, setAllRecipes] = useState([]);
+  // Used by FilterPanel to calculate counts/stats.
+  const [allRecipes] = useState(initialAllRecipes);
 
   const [filters, setFilters] = useState({
     ingredients: [],
@@ -91,40 +91,7 @@ export default function LunchPage({
   const sentinelRef = useRef(null);
 
   // ----------------------------------------
-  // 3. LAZY LOAD FILTER DATA
-  // ----------------------------------------
-  useEffect(() => {
-    async function loadFilterData() {
-      if (allRecipes.length > 0) return;
-
-      const params = new URLSearchParams();
-      params.set('page', 1);
-      params.set('per_page', 300);
-      params.set('serving_time', SERVING_TIME);
-
-      try {
-        const res = await fetch(`/api/recipes?${params.toString()}`);
-        const json = await res.json();
-        const base = json.data || [];
-        setAllRecipes(base);
-
-        const maxT = Math.max(
-          ...base.map((r) => r.total_time || r.cook_time || 0)
-        );
-        if (maxT > filters.maxTime) {
-          setFilters((f) => ({ ...f, maxTime: maxT }));
-        }
-      } catch (err) {
-        console.error('Failed to load filter data', err);
-      }
-    }
-
-    const timer = setTimeout(loadFilterData, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // ----------------------------------------
-  // 4. HELPER: BUILD QUERY STRING
+  // HELPER: BUILD QUERY STRING
   // ----------------------------------------
   const buildQueryString = (pageNumber) => {
     const params = new URLSearchParams();
@@ -143,7 +110,7 @@ export default function LunchPage({
   };
 
   // ----------------------------------------
-  // 5. FETCH RECIPES PAGE (Client Logic)
+  // FETCH RECIPES PAGE (Client Logic)
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
     setIsLoading(true);
@@ -181,7 +148,7 @@ export default function LunchPage({
   };
 
   // ----------------------------------------
-  // 6. RESET + LOAD WHEN FILTERS CHANGE
+  // RESET + LOAD WHEN FILTERS CHANGE
   // ----------------------------------------
   const isFirstRun = useRef(true);
   useEffect(() => {
@@ -197,7 +164,7 @@ export default function LunchPage({
   }, [filters]);
 
   // ----------------------------------------
-  // 7. INFINITE SCROLL
+  // INFINITE SCROLL
   // ----------------------------------------
   useEffect(() => {
     if (!hasMore || isLoading) return;
@@ -248,9 +215,9 @@ export default function LunchPage({
 
       <div className='vr-category-layout'>
         <FilterPanel
-          allRecipes={allRecipes} // Populates lazily
+          allRecipes={allRecipes}
           difficultyOptions={['easy', 'medium', 'hard']}
-          initialTimeRange={{ min: 0, max: 60 }}
+          initialTimeRange={{ min: 0, max: initialMaxTime }}
           onFilterChange={setFilters}
         />
 
@@ -275,10 +242,8 @@ export default function LunchPage({
                   recipe={r}
                 />
 
-                {/* Insert Ad after every 6th recipe */}
                 {(index + 1) % 6 === 0 && (
                   <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
-                    {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
                     <AdSlot
                       id='101'
                       position='in-feed'

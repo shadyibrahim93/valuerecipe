@@ -2,60 +2,58 @@ import Head from 'next/head';
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import RecipeCard from '../components/RecipeCard';
-import AdSlot from '../components/AdSlot';
 import Breadcrumb from '../components/Breadcrumb';
 import FilterPanel from '../components/FilterPanel';
 import { REVALIDATE_TIME, BRAND_NAME } from '../lib/constants';
 import SideBar from '../components/SideBar';
+import AdSlot from '../components/AdSlot';
 
 const PER_PAGE = 24;
 const SERVING_TIME = 'dinner';
-const PAGE_TITLE = 'Easy Dinner Recipes & Weeknight Meal Ideas';
+const PAGE_TITLE = 'Best Dinner Recipes & Easy Morning Ideas';
 const HERO_IMAGE = '/images/categories/dinner-category.webp';
 
 // ----------------------------------------
 // 1. SERVER SIDE BUILD (ISR)
 // ----------------------------------------
 export async function getStaticProps() {
-  // --- A. Query Logic ---
-  const query = supabase
-    .from('recipes')
-    // 👇 FIX: Select ONLY columns needed for the Card.
-    // Excluded: instructions, ingredients, nutrition_info (the heavy stuff)
-    .select(
-      'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine',
-      { count: 'exact' }
-    )
-    .ilike('serving_time', SERVING_TIME);
+  // Include `ingredients` so FilterPanel can build ingredient pills
+  const SAFE_COLUMNS =
+    'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine, ingredients';
 
-  // --- B. Fetch First Page (Limit 24) ---
+  // Fetch up to 300 dinner recipes for filters + first page
   const {
-    data: initialRecipes,
+    data: allDinner,
     count,
     error
-  } = await query.range(0, PER_PAGE - 1);
+  } = await supabase
+    .from('recipes')
+    .select(SAFE_COLUMNS, { count: 'exact' })
+    .ilike('serving_time', SERVING_TIME)
+    .limit(300);
 
   if (error) {
     console.error('ISR Error:', error);
     return { notFound: true };
   }
 
-  // --- C. Fetch Max Time (for initial filter state) ---
-  const { data: timeData } = await supabase
-    .from('recipes')
-    .select('total_time, cook_time')
-    .ilike('serving_time', SERVING_TIME)
-    .limit(100);
+  const safeAll = allDinner || [];
 
-  const initialMaxTime = timeData
-    ? Math.max(...timeData.map((r) => r.total_time || r.cook_time || 0))
-    : 60;
+  // First page for initial render
+  const initialRecipes = safeAll.slice(0, PER_PAGE);
+
+  // Max time for initial filter range
+  const initialMaxTime =
+    safeAll.length > 0
+      ? Math.max(...safeAll.map((r) => r.total_time || r.cook_time || 0))
+      : 60;
 
   return {
     props: {
-      initialRecipes: initialRecipes || [],
-      initialTotalCount: count || 0,
-      initialMaxTime
+      initialRecipes,
+      initialTotalCount: count || safeAll.length || 0,
+      initialMaxTime,
+      initialAllRecipes: safeAll
     },
     revalidate: REVALIDATE_TIME
   };
@@ -67,14 +65,15 @@ export async function getStaticProps() {
 export default function DinnerPage({
   initialRecipes = [],
   initialTotalCount = 0,
-  initialMaxTime = 60
+  initialMaxTime = 60,
+  initialAllRecipes = []
 }) {
   // Initialize state with Server Data (Instant Load!)
   const [recipes, setRecipes] = useState(initialRecipes);
   const [totalCount, setTotalCount] = useState(initialTotalCount);
 
-  // "All Recipes" is used by the FilterPanel to calculate counts/stats.
-  const [allRecipes, setAllRecipes] = useState([]);
+  // Used by FilterPanel to calculate counts/stats.
+  const [allRecipes] = useState(initialAllRecipes);
 
   const [filters, setFilters] = useState({
     ingredients: [],
@@ -92,40 +91,7 @@ export default function DinnerPage({
   const sentinelRef = useRef(null);
 
   // ----------------------------------------
-  // 3. LAZY LOAD FILTER DATA
-  // ----------------------------------------
-  useEffect(() => {
-    async function loadFilterData() {
-      if (allRecipes.length > 0) return;
-
-      const params = new URLSearchParams();
-      params.set('page', 1);
-      params.set('per_page', 300);
-      params.set('serving_time', SERVING_TIME);
-
-      try {
-        const res = await fetch(`/api/recipes?${params.toString()}`);
-        const json = await res.json();
-        const base = json.data || [];
-        setAllRecipes(base);
-
-        const maxT = Math.max(
-          ...base.map((r) => r.total_time || r.cook_time || 0)
-        );
-        if (maxT > filters.maxTime) {
-          setFilters((f) => ({ ...f, maxTime: maxT }));
-        }
-      } catch (err) {
-        console.error('Failed to load filter data', err);
-      }
-    }
-
-    const timer = setTimeout(loadFilterData, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // ----------------------------------------
-  // 4. HELPER: BUILD QUERY STRING
+  // HELPER: BUILD QUERY STRING
   // ----------------------------------------
   const buildQueryString = (pageNumber) => {
     const params = new URLSearchParams();
@@ -144,7 +110,7 @@ export default function DinnerPage({
   };
 
   // ----------------------------------------
-  // 5. FETCH RECIPES PAGE (Client Logic)
+  // FETCH RECIPES PAGE (Client Logic)
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
     setIsLoading(true);
@@ -182,7 +148,7 @@ export default function DinnerPage({
   };
 
   // ----------------------------------------
-  // 6. RESET + LOAD WHEN FILTERS CHANGE
+  // RESET + LOAD WHEN FILTERS CHANGE
   // ----------------------------------------
   const isFirstRun = useRef(true);
   useEffect(() => {
@@ -198,7 +164,7 @@ export default function DinnerPage({
   }, [filters]);
 
   // ----------------------------------------
-  // 7. INFINITE SCROLL
+  // INFINITE SCROLL
   // ----------------------------------------
   useEffect(() => {
     if (!hasMore || isLoading) return;
@@ -226,7 +192,7 @@ export default function DinnerPage({
         </title>
         <meta
           name='description'
-          content='Find easy and delicious dinner recipes for any night of the week. From quick meals to family favorites.'
+          content='Start your day right with our best dinner recipes. From quick eggs to fluffy pancakes.'
         />
       </Head>
 
@@ -251,7 +217,7 @@ export default function DinnerPage({
         <FilterPanel
           allRecipes={allRecipes}
           difficultyOptions={['easy', 'medium', 'hard']}
-          initialTimeRange={{ min: 0, max: 60 }}
+          initialTimeRange={{ min: 0, max: initialMaxTime }}
           onFilterChange={setFilters}
         />
 

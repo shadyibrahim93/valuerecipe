@@ -18,48 +18,50 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { slug } = params;
   const isTrending = slug === 'trending';
-  const decodedSlug = decodeURIComponent(slug); // Handle spaces e.g. "South American"
+  const decodedSlug = decodeURIComponent(slug); // Handle spaces like "South American"
 
-  let query = supabase.from('recipes').select('*', { count: 'exact' });
+  // Include `ingredients` so FilterPanel can build ingredient pills
+  const SAFE_COLUMNS =
+    'id, title, slug, image_url, rating, rating_count, total_time, cook_time, difficulty, serving_time, cuisine, ingredients';
+
+  let query = supabase.from('recipes').select(SAFE_COLUMNS, { count: 'exact' });
 
   if (isTrending) {
     query = query
       .order('rating_count', { ascending: false })
       .order('rating', { ascending: false });
   } else {
-    // 👇 FIX: Reverted to matching ONLY 'cuisine' to match your working client-side logic.
-    // The previous .or(..., category...) failed because the 'category' column likely doesn't exist.
+    // Match cuisine only (same behavior as /categories page)
     query = query.ilike('cuisine', decodedSlug);
   }
 
-  const {
-    data: initialRecipes,
-    count,
-    error
-  } = await query.range(0, PER_PAGE - 1);
+  // Single fetch for this cuisine / trending set
+  const { data: allRecipes, count, error } = await query.limit(300);
 
   if (error) {
     console.error(`ISR Error for slug "${decodedSlug}":`, error.message);
     return { notFound: true };
   }
 
-  // Fetch Max Time for filters (Consistency Fix)
-  let timeQuery = supabase.from('recipes').select('total_time, cook_time');
-  if (!isTrending) {
-    timeQuery = timeQuery.ilike('cuisine', decodedSlug);
-  }
-  const { data: timeData } = await timeQuery.limit(100);
-  const initialMaxTime = timeData
-    ? Math.max(...timeData.map((r) => r.total_time || r.cook_time || 0))
-    : 60;
+  const safeAll = allRecipes || [];
+
+  // First page for initial render
+  const initialRecipes = safeAll.slice(0, PER_PAGE);
+
+  // Compute initial max time once (same logic FilterPanel would use)
+  const initialMaxTime =
+    safeAll.length > 0
+      ? Math.max(...safeAll.map((r) => r.total_time || r.cook_time || 0))
+      : 60;
 
   return {
     props: {
       slug: decodedSlug,
       isTrending,
-      initialRecipes: initialRecipes || [],
-      initialTotalCount: count || 0,
-      initialMaxTime
+      initialRecipes,
+      initialTotalCount: count || safeAll.length || 0,
+      initialMaxTime,
+      initialAllRecipes: safeAll
     },
     revalidate: REVALIDATE_TIME || 3600
   };
@@ -70,19 +72,24 @@ export default function CategoryPage({
   isTrending,
   initialRecipes = [],
   initialTotalCount = 0,
-  initialMaxTime = 60
+  initialMaxTime = 60,
+  initialAllRecipes = []
 }) {
   const router = useRouter();
 
   const [recipes, setRecipes] = useState(initialRecipes);
   const [totalCount, setTotalCount] = useState(initialTotalCount);
-  const [allRecipes, setAllRecipes] = useState([]);
+  const [allRecipes, setAllRecipes] = useState(initialAllRecipes);
 
-  const [filters, setFilters] = useState({
+  // We track filters AND whether the user has actually changed them
+  const initialFiltersRef = useRef({
     ingredients: [],
     difficulty: null,
     maxTime: initialMaxTime
   });
+
+  const [filters, setFilters] = useState(initialFiltersRef.current);
+  const [hasUserFilters, setHasUserFilters] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(
@@ -100,57 +107,35 @@ export default function CategoryPage({
   const heroImage = `/images/categories/${slug?.toLowerCase()}-category.webp`;
 
   // ----------------------------------------
-  // 0. RESET STATE ON NAVIGATION
+  // 0. RESET STATE ON NAVIGATION / NEW PROPS
   // ----------------------------------------
   useEffect(() => {
     setRecipes(initialRecipes);
     setTotalCount(initialTotalCount);
-    setFilters((prev) => ({
-      ...prev,
-      maxTime: initialMaxTime,
+    setAllRecipes(initialAllRecipes);
+
+    const nextInitialFilters = {
       ingredients: [],
-      difficulty: null
-    }));
+      difficulty: null,
+      maxTime: initialMaxTime
+    };
+
+    initialFiltersRef.current = nextInitialFilters;
+    setFilters(nextInitialFilters);
+    setHasUserFilters(false);
+
     setPage(1);
     setHasMore(initialRecipes.length < initialTotalCount);
-    setAllRecipes([]);
-  }, [slug, initialRecipes]);
+  }, [
+    slug,
+    initialRecipes,
+    initialTotalCount,
+    initialMaxTime,
+    initialAllRecipes
+  ]);
 
   // ----------------------------------------
-  // 1. LOAD "ALL" RECIPES FOR FILTERS
-  // ----------------------------------------
-  useEffect(() => {
-    async function loadFilterData() {
-      if (!slug || allRecipes.length > 0) return;
-
-      const params = new URLSearchParams();
-      params.set('page', 1);
-      params.set('per_page', 300);
-      if (!isTrending) params.set('cuisine', slug);
-
-      try {
-        const res = await fetch(`/api/recipes?${params.toString()}`);
-        const json = await res.json();
-        const base = json.data || [];
-        setAllRecipes(base);
-
-        const maxT = Math.max(
-          ...base.map((r) => r.total_time || r.cook_time || 0)
-        );
-        if (maxT > filters.maxTime) {
-          setFilters((f) => ({ ...f, maxTime: maxT }));
-        }
-      } catch (err) {
-        console.error('Failed to load filter data', err);
-      }
-    }
-
-    const timer = setTimeout(loadFilterData, 500);
-    return () => clearTimeout(timer);
-  }, [slug, isTrending]);
-
-  // ----------------------------------------
-  // 2. HELPER: BUILD QUERY STRING
+  // 1. HELPER: BUILD QUERY STRING
   // ----------------------------------------
   const buildQueryString = (pageNumber) => {
     const params = new URLSearchParams();
@@ -170,7 +155,7 @@ export default function CategoryPage({
   };
 
   // ----------------------------------------
-  // 3. FETCH RECIPES PAGE
+  // 2. FETCH RECIPES PAGE
   // ----------------------------------------
   const fetchRecipesPage = async (pageNumber, replace = false) => {
     setIsLoading(true);
@@ -208,21 +193,42 @@ export default function CategoryPage({
   };
 
   // ----------------------------------------
-  // 4. TRIGGER FETCH ON FILTER CHANGE
+  // 3. HANDLE FILTER CHANGE (FROM FilterPanel)
   // ----------------------------------------
-  const isFirstRun = useRef(true);
+  const handleFilterChange = (next) => {
+    setFilters((prev) => {
+      const sameIngredients =
+        prev.ingredients.length === next.ingredients.length &&
+        prev.ingredients.every((v, i) => v === next.ingredients[i]);
+      const sameDifficulty = prev.difficulty === next.difficulty;
+      const sameMaxTime = prev.maxTime === next.maxTime;
+
+      const isSame = sameIngredients && sameDifficulty && sameMaxTime;
+
+      if (isSame) {
+        return prev; // No real change → don't trigger effects
+      }
+
+      // First time filters actually change → mark that the user interacted
+      setHasUserFilters(true);
+      return next;
+    });
+  };
+
+  // ----------------------------------------
+  // 4. TRIGGER FETCH ON *REAL* FILTER CHANGE
+  // ----------------------------------------
   useEffect(() => {
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
-      return;
-    }
+    // Ignore initial mount / non-user changes
+    if (!hasUserFilters) return;
 
     setRecipes([]);
     setPage(1);
     setHasMore(true);
     listRef.current?.scrollIntoView({ behavior: 'smooth' });
     fetchRecipesPage(1, true);
-  }, [filters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, hasUserFilters]);
 
   // ----------------------------------------
   // 5. INFINITE SCROLL
@@ -243,6 +249,7 @@ export default function CategoryPage({
 
     obs.observe(sentinelRef.current);
     return () => obs.disconnect();
+    // filters included so queries for page 2+ respect current filters
   }, [hasMore, isLoading, page, filters, slug]);
 
   if (router.isFallback) {
@@ -282,8 +289,8 @@ export default function CategoryPage({
         <FilterPanel
           allRecipes={allRecipes}
           difficultyOptions={['easy', 'medium', 'hard']}
-          initialTimeRange={{ min: 0, max: 60 }}
-          onFilterChange={setFilters}
+          initialTimeRange={{ min: 0, max: initialMaxTime }}
+          onFilterChange={handleFilterChange}
         />
 
         <main
@@ -307,10 +314,8 @@ export default function CategoryPage({
                   recipe={r}
                 />
 
-                {/* Insert Ad after every 6th recipe */}
                 {(index + 1) % 6 === 0 && (
                   <article className='vr-card vr-recipe-card vr-ad-card-wrapper'>
-                    {/* REPLACE '101' WITH YOUR REAL EZOIC PLACEHOLDER ID */}
                     <AdSlot
                       id='101'
                       position='in-feed'
