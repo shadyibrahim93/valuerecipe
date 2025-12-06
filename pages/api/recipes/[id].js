@@ -33,14 +33,17 @@ export default async function handler(req, res) {
     }
 
     try {
-      const payload = req.body || {};
+      // 1. 💡 Destructure to explicitly remove non-updatable columns
+      const {
+        ingredients_text, // Non-updatable/generated column
+        search_vector,
+        ...updatablePayload // Collect all remaining fields
+      } = req.body || {};
 
-      delete payload.id;
-      delete payload.created_at;
-
+      // 2. 💡 Use the sanitized payload for the database update
       const { data, error } = await supabase
         .from('recipes')
-        .update(payload)
+        .update(updatablePayload) // Pass the cleaned object
         .eq('id', id)
         .select()
         .single();

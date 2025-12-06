@@ -11,7 +11,8 @@
     "lint": "next lint",
     "seed": "node scripts/seed.js",
     "zip": "node create-zip.js",
-    "esbuild": "esbuild --version"
+    "esbuild": "esbuild --version",
+    "compress": "node optimize-images.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
