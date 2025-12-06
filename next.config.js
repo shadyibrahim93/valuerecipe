@@ -2,8 +2,8 @@
 const path = require('path');
 
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
-
   sassOptions: {
     sourceMap: true,
     includePaths: [path.join(__dirname, 'scss')]

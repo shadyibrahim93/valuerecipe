@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "node optimize-images.js && next build && next-sitemap",
+    "build": "node optimize-images.js && next build && next-sitemap && opennextjs-cloudflare build --skipNextBuild",
     "start": "next start -p 3000",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "lint": "next lint",
     "seed": "node scripts/seed.js",
     "zip": "node create-zip.js",
@@ -35,9 +36,10 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.14.3",
+    "@opennextjs/cloudflare": "^1.14.4",
     "@types/react": "19.2.6",
     "baseline-browser-mapping": "^2.8.32",
+    "cross-env": "^10.1.0",
     "esbuild": "^0.27.0",
     "eslint": "8.43.0",
     "eslint-config-next": "13.5.6",
